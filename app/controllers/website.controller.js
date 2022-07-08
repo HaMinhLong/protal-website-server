@@ -126,7 +126,7 @@ const create = async (req, res) => {
   } else {
     Website.create({
       ...data,
-      logo: "/uploads/" + req.file.filename,
+      logo: req.file ? "/uploads/" + req.file.filename : "",
       id:
         Math.floor(Math.random() * (100000000000 - 1000000000 + 1)) +
         100000000000,
