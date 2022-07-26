@@ -168,7 +168,10 @@ const updateRecord = async (req, res) => {
     });
   } else {
     if (req.file) {
-      fs.unlinkSync(__basedir + "/public/" + website.logo);
+      if (fs.existsSync(website.logo)) {
+        //file exists
+        fs.unlinkSync(__basedir + "/public/" + website.logo);
+      }
     }
     Website.update(
       {
