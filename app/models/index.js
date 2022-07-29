@@ -1,7 +1,7 @@
 const config = require("../config/db.config.js");
 const initialDataServer = require("../helpers/initialData.js");
 
-const Sequelize = require("sequelize");
+const Sequelize = require("sequelize-hierarchy")();
 const sequelize = new Sequelize({
   database: config.DB,
   username: config.USER,
@@ -38,12 +38,18 @@ db.websiteGroup = require("../models/websiteGroup.model.js")(
   Sequelize
 );
 db.website = require("../models/website.model.js")(sequelize, Sequelize);
+db.menu = require("../models/menu.model.js")(sequelize, Sequelize);
 db.location = require("../models/location.model.js")(sequelize, Sequelize);
 db.roleWebsite = require("../models/roleWebsite.model.js")(
   sequelize,
   Sequelize
 );
 db.websiteUser = require("./websiteUser.model")(sequelize, Sequelize);
+
+//
+db.website.hasMany(db.menu);
+db.menu.belongsTo(db.website);
+//
 
 //
 db.websiteGroup.hasMany(db.website);
