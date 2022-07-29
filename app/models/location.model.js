@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: "address",
     },
+    websiteId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      field: "websiteId",
+    },
   });
 
   return Location;

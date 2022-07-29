@@ -139,14 +139,14 @@ const create = async (req, res) => {
   const passwordEmail =
     config && config[0] && config[0].password
       ? config[0].password
-      : "Na+89-K-2";
+      : "Naru+89-K-2";
 
   User.create({
     ...data,
     id:
       Math.floor(Math.random() * (100000000000 - 1000000000 + 1)) +
       100000000000,
-    password: bcrypt.hashSync(password, 8),
+    password: bcrypt.hashSync(data.password, 8),
   })
     .then((user) => {
       var transporter = nodemailer.createTransport(

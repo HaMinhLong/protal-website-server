@@ -42,6 +42,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: "skype",
     },
+    websiteId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      field: "websiteId",
+    },
   });
 
   return RoleWebsite;
