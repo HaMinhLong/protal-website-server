@@ -17,10 +17,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       field: "url",
     },
-    orderBy: {
-      type: DataTypes.INTEGER,
+    icon: {
+      type: DataTypes.STRING,
       allowNull: false,
-      field: "orderBy",
+      field: "icon",
     },
     position: {
       type: DataTypes.INTEGER,
@@ -37,6 +37,11 @@ module.exports = (sequelize, DataTypes) => {
       hierarchy: true,
       allowNull: true,
       field: "parentId",
+    },
+    droppable: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      field: "droppable",
     },
     websiteId: {
       type: DataTypes.BIGINT,

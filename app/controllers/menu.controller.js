@@ -11,16 +11,22 @@ const getList = async (req, res) => {
   const { filter, range, sort, attributes } = req.query;
   const filters = filter ? JSON.parse(filter) : {};
   const ranges = range ? JSON.parse(range) : [0, 20];
-  const order = sort ? JSON.parse(sort) : ["createdAt", "DESC"];
+  const order = sort
+    ? JSON.parse(sort)
+    : [
+        ["position", "DESC"],
+        ["updatedAt", "DESC"],
+      ];
   const attributesQuery = attributes
     ? attributes.split(",")
     : [
         "id",
         "name",
         "url",
-        "orderBy",
+        "icon",
         "position",
         "status",
+        "droppable",
         "parentId",
         "websiteId",
         "createdAt",
@@ -45,11 +51,10 @@ const getList = async (req, res) => {
         [Op.between]: [fromDate, toDate],
       },
     },
-    order: [order],
+    order: order,
     attributes: attributesQuery,
     offset: ranges[0],
     limit: size,
-    hierarchy: true,
   };
 
   Menu.findAndCountAll(options)
@@ -88,7 +93,6 @@ const getOne = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: menu,
-          pagination: [],
         },
         success: true,
         error: "",
@@ -109,6 +113,7 @@ const create = async (req, res) => {
 
   Menu.create({
     ...data,
+    droppable: true,
     id:
       Math.floor(Math.random() * (100000000000 - 1000000000 + 1)) +
       100000000000,
@@ -135,14 +140,13 @@ const create = async (req, res) => {
 
 const updateRecord = async (req, res) => {
   const { id } = req.params;
-  const { name, url, orderBy, position, parentId, websiteId, status } =
-    req.body;
+  const { name, url, icon, position, parentId, websiteId, status } = req.body;
 
   Menu.update(
     {
       name: name,
       url: url,
-      orderBy: orderBy,
+      icon: icon,
       position: position,
       status: status,
       parentId: parentId,
