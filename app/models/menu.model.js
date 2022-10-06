@@ -24,8 +24,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     position: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       field: "position",
+    },
+    location: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "location",
     },
     status: {
       type: DataTypes.INTEGER,

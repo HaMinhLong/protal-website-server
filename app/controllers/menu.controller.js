@@ -4,6 +4,7 @@ const moment = require("moment");
 // PROJECT IMPORT
 const db = require("../models");
 const Menu = db.menu;
+const Website = db.website;
 const Op = db.Sequelize.Op;
 const statusErrors = require("../errors/status-error");
 
@@ -14,7 +15,7 @@ const getList = async (req, res) => {
   const order = sort
     ? JSON.parse(sort)
     : [
-        ["position", "DESC"],
+        ["position", "ASC"],
         ["updatedAt", "DESC"],
       ];
   const attributesQuery = attributes
@@ -25,6 +26,7 @@ const getList = async (req, res) => {
         "url",
         "icon",
         "position",
+        "location",
         "status",
         "droppable",
         "parentId",
@@ -32,6 +34,7 @@ const getList = async (req, res) => {
         "createdAt",
         "updatedAt",
       ];
+  const location = filters.location || "";
   const status = filters.status || "";
   const name = filters.name || "";
   const websiteId = filters.websiteId || "";
@@ -44,6 +47,7 @@ const getList = async (req, res) => {
     where: {
       [Op.and]: [
         status !== "" && { status: status },
+        location !== "" && { location: location },
         { name: { [Op.like]: "%" + name + "%" } },
         websiteId !== "" && { websiteId: websiteId },
       ],
@@ -55,6 +59,13 @@ const getList = async (req, res) => {
     attributes: attributesQuery,
     offset: ranges[0],
     limit: size,
+    include: [
+      {
+        model: Website,
+        required: true,
+        attributes: ["id", "name"],
+      },
+    ],
   };
 
   Menu.findAndCountAll(options)
@@ -140,7 +151,8 @@ const create = async (req, res) => {
 
 const updateRecord = async (req, res) => {
   const { id } = req.params;
-  const { name, url, icon, position, parentId, websiteId, status } = req.body;
+  const { name, url, icon, position, location, parentId, websiteId, status } =
+    req.body;
 
   Menu.update(
     {
@@ -148,6 +160,7 @@ const updateRecord = async (req, res) => {
       url: url,
       icon: icon,
       position: position,
+      location: location,
       status: status,
       parentId: parentId,
       websiteId: websiteId,
