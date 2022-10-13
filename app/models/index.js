@@ -45,6 +45,10 @@ db.roleWebsite = require("../models/roleWebsite.model.js")(
   Sequelize
 );
 db.websiteUser = require("./websiteUser.model")(sequelize, Sequelize);
+db.categoryGroup = require("../models/categoryGroup.model.js")(
+  sequelize,
+  Sequelize
+);
 
 //
 db.website.hasMany(db.menu);
