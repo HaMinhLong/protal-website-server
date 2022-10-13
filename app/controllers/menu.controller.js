@@ -22,21 +22,21 @@ const getList = async (req, res) => {
     ? attributes.split(",")
     : [
         "id",
-        "name",
+        "text",
         "url",
         "icon",
         "position",
         "location",
         "status",
         "droppable",
-        "parentId",
+        "parent",
         "websiteId",
         "createdAt",
         "updatedAt",
       ];
   const location = filters.location || "";
   const status = filters.status || "";
-  const name = filters.name || "";
+  const text = filters.text || "";
   const websiteId = filters.websiteId || "";
   const fromDate = filters.fromDate || "2021-01-01T14:06:48.000Z";
   const toDate = filters.toDate || moment();
@@ -48,7 +48,7 @@ const getList = async (req, res) => {
       [Op.and]: [
         status !== "" && { status: status },
         location !== "" && { location: location },
-        { name: { [Op.like]: "%" + name + "%" } },
+        { text: { [Op.like]: "%" + text + "%" } },
         websiteId !== "" && { websiteId: websiteId },
       ],
       createdAt: {
@@ -151,18 +151,18 @@ const create = async (req, res) => {
 
 const updateRecord = async (req, res) => {
   const { id } = req.params;
-  const { name, url, icon, position, location, parentId, websiteId, status } =
+  const { text, url, icon, position, location, parent, websiteId, status } =
     req.body;
 
   Menu.update(
     {
-      name: name,
+      text: text,
       url: url,
       icon: icon,
       position: position,
       location: location,
       status: status,
-      parentId: parentId,
+      parent: parent,
       websiteId: websiteId,
     },
     {

@@ -6,15 +6,15 @@ const Menu = db.menu;
 
 const validateCreate = () => {
   return [
-    body("name")
+    body("text")
       .not()
       .isEmpty()
       .custom(async (value, { req }) => {
         const { body } = req;
         const menu = await Menu.findOne({
-          where: { name: value },
+          where: { text: value },
         });
-        if (menu && value !== body.nameOld) {
+        if (menu && value !== body.textOld) {
           return Promise.reject("Menu website đã tồn tại");
         }
       }),

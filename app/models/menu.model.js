@@ -7,10 +7,10 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       field: "id",
     },
-    name: {
+    text: {
       type: DataTypes.STRING,
       allowNull: false,
-      field: "name",
+      field: "text",
     },
     url: {
       type: DataTypes.STRING,
@@ -37,11 +37,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       field: "status",
     },
-    parentId: {
+    parent: {
       type: DataTypes.BIGINT,
-      hierarchy: true,
       allowNull: true,
-      field: "parentId",
+      field: "parent",
     },
     droppable: {
       type: DataTypes.BOOLEAN,
