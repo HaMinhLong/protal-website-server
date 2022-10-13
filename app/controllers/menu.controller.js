@@ -124,6 +124,7 @@ const create = async (req, res) => {
 
   Menu.create({
     ...data,
+    parent: data.parent || 0,
     droppable: true,
     id:
       Math.floor(Math.random() * (100000000000 - 1000000000 + 1)) +
