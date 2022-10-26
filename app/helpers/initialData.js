@@ -14,7 +14,7 @@ initialData = (db) => {
   });
 
   db.user.create({
-    id: 12345678911,
+    id: 1,
     username: "admin",
     fullName: "Hà Minh Long",
     password: bcrypt.hashSync("admin", 8),
@@ -24,16 +24,16 @@ initialData = (db) => {
     status: 1,
   });
   db.websiteGroup.create({
-    id: 123456789,
+    id: 1,
     name: "Website bán hàng",
     description: "",
     status: 1,
   });
   db.website.create({
-    id: 123456789,
+    id: 1,
     name: "Trang Shop",
     description: "",
-    websiteGroupId: 123456789,
+    websiteGroupId: 1,
     status: 1,
   });
 };

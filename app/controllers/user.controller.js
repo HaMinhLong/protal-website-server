@@ -142,10 +142,6 @@ const create = async (req, res) => {
       : "Naru+89-K-2";
 
   User.create({
-    ...data,
-    id:
-      Math.floor(Math.random() * (100000000000 - 1000000000 + 1)) +
-      100000000000,
     password: bcrypt.hashSync(data.password, 8),
   })
     .then((user) => {

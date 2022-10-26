@@ -95,9 +95,6 @@ const create = async (req, res) => {
 
   WebsiteGroup.create({
     ...data,
-    id:
-      Math.floor(Math.random() * (100000000000 - 1000000000 + 1)) +
-      100000000000,
   })
     .then((websiteGroup) => {
       res.status(statusErrors.success).json({

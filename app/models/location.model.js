@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Location = sequelize.define("locations", {
     id: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       field: "address",
     },
     websiteId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       field: "websiteId",
     },

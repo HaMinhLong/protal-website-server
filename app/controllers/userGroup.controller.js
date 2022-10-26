@@ -95,9 +95,6 @@ const create = async (req, res) => {
   const data = req.body;
   UserGroup.create({
     ...data,
-    id:
-      Math.floor(Math.random() * (100000000000 - 1000000000 + 1)) +
-      100000000000,
   })
     .then((userGroup) => {
       res.status(statusErrors.success).json({

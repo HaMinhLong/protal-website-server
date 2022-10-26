@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const menu = sequelize.define("menus", {
+  const Category = sequelize.define("categories", {
     id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -12,34 +12,24 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       field: "text",
     },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: "description",
+    },
     url: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       field: "url",
-    },
-    icon: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      field: "icon",
     },
     position: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       field: "position",
-    },
-    location: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      field: "location",
-    },
-    status: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      field: "status",
     },
     parent: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       field: "parent",
     },
     droppable: {
@@ -47,12 +37,32 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       field: "droppable",
     },
+    isHome: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      field: "isHome",
+    },
+    images: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+      field: "images",
+    },
     websiteId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       field: "websiteId",
     },
+    categoryGroupId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "categoryGroupId",
+    },
+    status: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "status",
+    },
   });
-  menu.sync().then(async () => {});
-  return menu;
+  Category.sync().then(async () => {});
+  return Category;
 };

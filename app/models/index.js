@@ -49,6 +49,17 @@ db.categoryGroup = require("../models/categoryGroup.model.js")(
   sequelize,
   Sequelize
 );
+db.category = require("../models/category.model.js")(sequelize, Sequelize);
+
+//
+db.categoryGroup.hasMany(db.category);
+db.category.belongsTo(db.categoryGroup);
+//
+
+//
+db.website.hasMany(db.category);
+db.category.belongsTo(db.website);
+//
 
 //
 db.website.hasMany(db.menu);

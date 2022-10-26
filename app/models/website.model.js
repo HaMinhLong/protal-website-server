@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Website = sequelize.define("websites", {
     id: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       field: "logo",
     },
     websiteGroupId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       field: "websiteGroupId",
     },

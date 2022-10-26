@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define("users", {
     id: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       field: "mobile",
     },
     userGroupId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       field: "userGroupId",
     },

@@ -13,9 +13,6 @@ const signUp = (req, res) => {
   const { username, email, password } = res.body;
   // Save User to Database
   User.create({
-    id:
-      Math.floor(Math.random() * (100000000000 - 1000000000 + 1)) +
-      100000000000,
     username: username,
     email: email,
     password: bcrypt.hashSync(password, 8),

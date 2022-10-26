@@ -58,7 +58,7 @@ const getList = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const { id, email, password } = req.body;
+  const { email, password } = req.body;
   const config = await Config.findOne({
     where: { email: email },
   });
@@ -71,10 +71,6 @@ const create = async (req, res) => {
     });
   } else {
     Config.create({
-      id:
-        id ||
-        Math.floor(Math.random() * (100000000000 - 1000000000 + 1)) +
-          100000000000,
       email,
       password,
     })

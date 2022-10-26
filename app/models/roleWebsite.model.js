@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const RoleWebsite = sequelize.define("roleWebsites", {
     id: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       field: "skype",
     },
     websiteId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       field: "websiteId",
     },

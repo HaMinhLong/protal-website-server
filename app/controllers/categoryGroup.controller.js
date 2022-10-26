@@ -95,9 +95,6 @@ const create = async (req, res) => {
 
   CategoryGroup.create({
     ...data,
-    id:
-      Math.floor(Math.random() * (100000000000 - 1000000000 + 1)) +
-      100000000000,
   })
     .then((categoryGroup) => {
       res.status(statusErrors.success).json({

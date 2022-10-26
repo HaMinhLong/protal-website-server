@@ -3,32 +3,44 @@ const moment = require("moment");
 
 // PROJECT IMPORT
 const db = require("../models");
+const Category = db.category;
 const Website = db.website;
-const WebsiteGroup = db.websiteGroup;
+const CategoryGroup = db.categoryGroup;
 const Op = db.Sequelize.Op;
 const statusErrors = require("../errors/status-error");
-var fs = require("fs");
 
 const getList = async (req, res) => {
   const { filter, range, sort, attributes } = req.query;
   const filters = filter ? JSON.parse(filter) : {};
   const ranges = range ? JSON.parse(range) : [0, 20];
-  const order = sort ? JSON.parse(sort) : ["createdAt", "DESC"];
+  const order = sort
+    ? JSON.parse(sort)
+    : [
+        ["position", "ASC"],
+        ["updatedAt", "DESC"],
+      ];
   const attributesQuery = attributes
     ? attributes.split(",")
     : [
         "id",
-        "name",
+        "text",
         "description",
-        "logo",
-        "websiteGroupId",
+        "url",
+        "position",
+        "parent",
+        "droppable",
+        "isHome",
+        "images",
+        "websiteId",
+        "categoryGroupId",
         "status",
         "createdAt",
         "updatedAt",
       ];
+  const location = filters.location || "";
   const status = filters.status || "";
-  const name = filters.name || "";
-  const websiteGroupId = filters.websiteGroupId || "";
+  const text = filters.text || "";
+  const websiteId = filters.websiteId || "";
   const fromDate = filters.fromDate || "2021-01-01T14:06:48.000Z";
   const toDate = filters.toDate || moment();
   const size = ranges[1] - ranges[0];
@@ -38,27 +50,33 @@ const getList = async (req, res) => {
     where: {
       [Op.and]: [
         status !== "" && { status: status },
-        websiteGroupId !== "" && { websiteGroupId: websiteGroupId },
-        { name: { [Op.like]: "%" + name + "%" } },
+        location !== "" && { location: location },
+        { text: { [Op.like]: "%" + text + "%" } },
+        websiteId !== "" && { websiteId: websiteId },
       ],
       createdAt: {
         [Op.between]: [fromDate, toDate],
       },
     },
-    order: [order],
+    order: order,
     attributes: attributesQuery,
     offset: ranges[0],
     limit: size,
     include: [
       {
-        model: WebsiteGroup,
+        model: Website,
+        required: true,
+        attributes: ["id", "name"],
+      },
+      {
+        model: CategoryGroup,
         required: true,
         attributes: ["id", "name"],
       },
     ],
   };
 
-  Website.findAndCountAll(options)
+  Category.findAndCountAll(options)
     .then((result) => {
       res.status(statusErrors.success).json({
         results: {
@@ -85,16 +103,15 @@ const getList = async (req, res) => {
 
 const getOne = async (req, res) => {
   const { id } = req.params;
-  Website.findOne({
+  Category.findOne({
     where: {
       id: id,
     },
   })
-    .then((website) => {
+    .then((menu) => {
       res.status(statusErrors.success).json({
         results: {
-          list: website,
-          pagination: [],
+          list: menu,
         },
         success: true,
         error: "",
@@ -105,7 +122,7 @@ const getOne = async (req, res) => {
       res.status(statusErrors.badRequest).json({
         success: true,
         error: err.message,
-        message: "Xảy ra lỗi khi lấy thông tin website!",
+        message: "Xảy ra lỗi khi lấy thông tin chuyên mục!",
       });
     });
 };
@@ -113,102 +130,89 @@ const getOne = async (req, res) => {
 const create = async (req, res) => {
   const data = req.body;
 
-  const website = await Website.findOne({
-    where: { name: data.name },
-  });
-
-  if (website) {
-    res.status(statusErrors.badRequest).json({
-      success: false,
-      error: "Website đã tồn tại!",
-      message: "Website đã tồn tại!",
-    });
-  } else {
-    Website.create({
-      ...data,
-      logo: req.file ? "/uploads/" + req.file.filename : "",
-    })
-      .then((website) => {
-        res.status(statusErrors.success).json({
-          results: {
-            list: website,
-            pagination: [],
-          },
-          success: true,
-          error: "",
-          message: "Tạo mới website thành công!",
-        });
-      })
-      .catch((err) => {
-        res.status(statusErrors.badRequest).json({
-          success: false,
-          error: err.message,
-          message: "Xảy ra lỗi khi tạo mới website!",
-        });
+  Category.create({
+    ...data,
+    parent: data.parent || 0,
+    droppable: true,
+  })
+    .then((menu) => {
+      res.status(statusErrors.success).json({
+        results: {
+          list: menu,
+          pagination: [],
+        },
+        success: true,
+        error: "",
+        message: "Tạo mới chuyên mục thành công!",
       });
-  }
+    })
+    .catch((err) => {
+      res.status(statusErrors.badRequest).json({
+        success: false,
+        error: err.message,
+        message: "Xảy ra lỗi khi tạo mới chuyên mục!",
+      });
+    });
 };
 
 const updateRecord = async (req, res) => {
   const { id } = req.params;
-  const { name, description, websiteGroupId, status, logo, nameOld } = req.body;
+  const {
+    text,
+    description,
+    url,
+    isHome,
+    position,
+    images,
+    parent,
+    websiteId,
+    categoryGroupId,
+    status,
+  } = req.body;
 
-  const website = await Website.findOne({
-    where: { name: name },
-  });
-
-  if (website && name !== nameOld) {
-    res.status(statusErrors.badRequest).json({
-      success: false,
-      error: "Website đã tồn tại!",
-      message: "Website đã tồn tại!",
-    });
-  } else {
-    if (req.file) {
-      if (fs.existsSync(website.logo)) {
-        //file exists
-        fs.unlinkSync(__basedir + "/public/" + website.logo);
-      }
-    }
-    Website.update(
-      {
-        status: status,
-        name: name,
-        description: description,
-        websiteGroupId: websiteGroupId,
-        logo: req.file ? "/uploads/" + req.file.filename : logo,
+  Category.update(
+    {
+      text: text,
+      description: description,
+      url: url,
+      position: position,
+      parent: parent,
+      isHome: isHome,
+      images: images,
+      websiteId: websiteId,
+      categoryGroupId: categoryGroupId,
+      status: status,
+    },
+    {
+      where: {
+        id: id,
       },
-      {
-        where: {
-          id: id,
+    }
+  )
+    .then((menu) => {
+      res.status(statusErrors.success).json({
+        results: {
+          list: menu,
+          pagination: [],
         },
-      }
-    )
-      .then((website) => {
-        res.status(statusErrors.success).json({
-          results: {
-            list: website,
-            pagination: [],
-          },
-          success: true,
-          error: "",
-          message: "Cập nhật website thành công!",
-        });
-      })
-      .catch((err) => {
-        res.status(statusErrors.badRequest).json({
-          success: false,
-          error: err.message,
-          message: "Xảy ra lỗi khi cập nhật website!",
-        });
+        success: true,
+        error: "",
+        message: "Cập nhật chuyên mục thành công!",
       });
-  }
+    })
+    .catch((err) => {
+      res.status(statusErrors.badRequest).json({
+        success: false,
+        error: err.message,
+        message: "Xảy ra lỗi khi cập nhật chuyên mục!",
+      });
+    });
 };
 
 const updateStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-  Website.update(
+  Category.update(
     { status: status },
     {
       where: {
@@ -216,10 +220,10 @@ const updateStatus = async (req, res) => {
       },
     }
   )
-    .then((website) => {
+    .then((menu) => {
       res.status(statusErrors.success).json({
         results: {
-          list: website,
+          list: menu,
           pagination: [],
         },
         success: true,
@@ -238,27 +242,27 @@ const updateStatus = async (req, res) => {
 
 const deleteRecord = async (req, res) => {
   const { id } = req.params;
-  Website.destroy({
+  Category.destroy({
     where: {
       id: id,
     },
   })
-    .then((website) => {
+    .then((menu) => {
       res.status(statusErrors.success).json({
         results: {
-          list: website,
+          list: menu,
           pagination: [],
         },
         success: true,
         error: "",
-        message: "Xóa website thành công!",
+        message: "Xóa chuyên mục thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         message: err.message,
-        message: "Xảy ra lôi khi xóa website!",
+        message: "Xảy ra lôi khi xóa chuyên mục!",
       });
     });
 };
