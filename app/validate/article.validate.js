@@ -2,23 +2,25 @@ const { body } = require("express-validator");
 
 // PROJECT IMPORT
 const db = require("../models");
-const Website = db.website;
+const Article = db.article;
 
 const validateCreate = () => {
   return [
-    body("name")
+    body("title")
       .not()
       .isEmpty()
       .custom(async (value, { req }) => {
         const { body } = req;
-        const website = await Website.findOne({
-          where: { name: value },
+        const article = await Article.findOne({
+          where: { title: value },
         });
-        if (website && value !== body.nameOld) {
-          return Promise.reject("Website đã tồn tại");
+        if (article && value !== body.titleOld) {
+          return Promise.reject("Tin tức đã tồn tại");
         }
       }),
-    body("websiteGroupId").not().isEmpty(),
+    body("websiteId").not().isEmpty(),
+    body("categoryId").not().isEmpty(),
+    body("url").not().isEmpty(),
     body("status").not().isEmpty(),
   ];
 };

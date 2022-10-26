@@ -74,6 +74,7 @@ require("./app/routes/menu.routes")(app);
 require("./app/routes/categoryGroup.routes")(app);
 require("./app/routes/category.routes")(app);
 require("./app/routes/uploadImage.routes")(app);
+require("./app/routes/article.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

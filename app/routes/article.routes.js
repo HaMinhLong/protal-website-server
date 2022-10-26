@@ -1,37 +1,37 @@
 // PROJECT IMPORT
 const { authJwt } = require("../middleware");
-const controller = require("../controllers/category.controller");
+const controller = require("../controllers/article.controller");
 const { validate } = require("../validate/validate");
 const {
   validateCreate,
   validateUpdateStatus,
-} = require("../validate/category.validate");
+} = require("../validate/article.validate");
 
 module.exports = function (app) {
-  app.get("/category", [authJwt.verifyToken], controller.getList);
+  app.get("/article", [authJwt.verifyToken], controller.getList);
 
-  app.get("/category/:id", [authJwt.verifyToken], controller.getOne);
+  app.get("/article/:id", [authJwt.verifyToken], controller.getOne);
 
   app.post(
-    "/category",
+    "/article",
     [authJwt.verifyToken],
     [validate(validateCreate())],
     controller.create
   );
 
   app.put(
-    "/category/:id",
+    "/article/:id",
     [authJwt.verifyToken],
     [validate(validateCreate())],
     controller.updateRecord
   );
 
   app.put(
-    "/category/updateStatus/:id",
+    "/article/updateStatus/:id",
     [authJwt.verifyToken],
     [validate(validateUpdateStatus())],
     controller.updateStatus
   );
 
-  app.delete("/category/:id", [authJwt.verifyToken], controller.deleteRecord);
+  app.delete("/article/:id", [authJwt.verifyToken], controller.deleteRecord);
 };
