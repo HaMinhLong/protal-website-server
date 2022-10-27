@@ -57,6 +57,16 @@ db.producerGroup = require("../models/producerGroup.model.js")(
   Sequelize
 );
 db.producer = require("../models/producer.model.js")(sequelize, Sequelize);
+db.supplierGroup = require("../models/supplierGroup.model.js")(
+  sequelize,
+  Sequelize
+);
+db.supplier = require("../models/supplier.model.js")(sequelize, Sequelize);
+
+//
+db.supplierGroup.hasMany(db.supplier);
+db.supplier.belongsTo(db.supplierGroup);
+//
 
 //
 db.producerGroup.hasMany(db.producer);

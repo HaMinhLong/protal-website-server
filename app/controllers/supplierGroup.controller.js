@@ -3,8 +3,7 @@ const moment = require("moment");
 
 // PROJECT IMPORT
 const db = require("../models");
-const Producer = db.producer;
-const ProducerGroup = db.producerGroup;
+const SupplierGroup = db.supplierGroup;
 const Op = db.Sequelize.Op;
 const statusErrors = require("../errors/status-error");
 
@@ -15,18 +14,9 @@ const getList = async (req, res) => {
   const order = sort ? JSON.parse(sort) : ["createdAt", "DESC"];
   const attributesQuery = attributes
     ? attributes.split(",")
-    : [
-        "id",
-        "name",
-        "description",
-        "producerGroupId",
-        "status",
-        "createdAt",
-        "updatedAt",
-      ];
+    : ["id", "name", "description", "status", "createdAt", "updatedAt"];
   const status = filters.status || "";
   const name = filters.name || "";
-  const producerGroupId = filters.producerGroupId || "";
   const fromDate = filters.fromDate || "2021-01-01T14:06:48.000Z";
   const toDate = filters.toDate || moment();
   const size = ranges[1] - ranges[0];
@@ -37,7 +27,6 @@ const getList = async (req, res) => {
       [Op.and]: [
         status !== "" && { status: status },
         { name: { [Op.like]: "%" + name + "%" } },
-        producerGroupId !== "" && { producerGroupId: producerGroupId },
       ],
       createdAt: {
         [Op.between]: [fromDate, toDate],
@@ -47,16 +36,9 @@ const getList = async (req, res) => {
     attributes: attributesQuery,
     offset: ranges[0],
     limit: size,
-    include: [
-      {
-        model: ProducerGroup,
-        required: true,
-        attributes: ["id", "name"],
-      },
-    ],
   };
 
-  Producer.findAndCountAll(options)
+  SupplierGroup.findAndCountAll(options)
     .then((result) => {
       res.status(statusErrors.success).json({
         results: {
@@ -83,15 +65,15 @@ const getList = async (req, res) => {
 
 const getOne = async (req, res) => {
   const { id } = req.params;
-  Producer.findOne({
+  SupplierGroup.findOne({
     where: {
       id: id,
     },
   })
-    .then((producer) => {
+    .then((supplierGroup) => {
       res.status(statusErrors.success).json({
         results: {
-          list: producer,
+          list: supplierGroup,
           pagination: [],
         },
         success: true,
@@ -103,7 +85,7 @@ const getOne = async (req, res) => {
       res.status(statusErrors.badRequest).json({
         success: true,
         error: err.message,
-        message: "Xảy ra lỗi khi lấy thông tin nhà sản xuất!",
+        message: "Xảy ra lỗi khi lấy thông tin nhóm nhà cung cấp!",
       });
     });
 };
@@ -111,39 +93,38 @@ const getOne = async (req, res) => {
 const create = async (req, res) => {
   const data = req.body;
 
-  Producer.create({
+  SupplierGroup.create({
     ...data,
   })
-    .then((producer) => {
+    .then((supplierGroup) => {
       res.status(statusErrors.success).json({
         results: {
-          list: producer,
+          list: supplierGroup,
           pagination: [],
         },
         success: true,
         error: "",
-        message: "Tạo mới nhà sản xuất thành công!",
+        message: "Tạo mới nhóm nhà cung cấp thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         error: err.message,
-        message: "Xảy ra lỗi khi tạo mới nhà sản xuất!",
+        message: "Xảy ra lỗi khi tạo mới nhóm nhà cung cấp!",
       });
     });
 };
 
 const updateRecord = async (req, res) => {
   const { id } = req.params;
-  const { name, description, producerGroupId, status } = req.body;
+  const { name, description, status } = req.body;
 
-  Producer.update(
+  SupplierGroup.update(
     {
       status: status,
       name: name,
       description: description,
-      producerGroupId: producerGroupId,
     },
     {
       where: {
@@ -151,22 +132,22 @@ const updateRecord = async (req, res) => {
       },
     }
   )
-    .then((producer) => {
+    .then((supplierGroup) => {
       res.status(statusErrors.success).json({
         results: {
-          list: producer,
+          list: supplierGroup,
           pagination: [],
         },
         success: true,
         error: "",
-        message: "Cập nhật nhà sản xuất thành công!",
+        message: "Cập nhật nhóm nhà cung cấp thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         error: err.message,
-        message: "Xảy ra lỗi khi cập nhật nhà sản xuất!",
+        message: "Xảy ra lỗi khi cập nhật nhóm nhà cung cấp!",
       });
     });
 };
@@ -174,7 +155,7 @@ const updateRecord = async (req, res) => {
 const updateStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-  Producer.update(
+  SupplierGroup.update(
     { status: status },
     {
       where: {
@@ -182,10 +163,10 @@ const updateStatus = async (req, res) => {
       },
     }
   )
-    .then((producer) => {
+    .then((supplierGroup) => {
       res.status(statusErrors.success).json({
         results: {
-          list: producer,
+          list: supplierGroup,
           pagination: [],
         },
         success: true,
@@ -204,27 +185,27 @@ const updateStatus = async (req, res) => {
 
 const deleteRecord = async (req, res) => {
   const { id } = req.params;
-  Producer.destroy({
+  SupplierGroup.destroy({
     where: {
       id: id,
     },
   })
-    .then((producer) => {
+    .then((supplierGroup) => {
       res.status(statusErrors.success).json({
         results: {
-          list: producer,
+          list: supplierGroup,
           pagination: [],
         },
         success: true,
         error: "",
-        message: "Xóa nhà sản xuất thành công!",
+        message: "Xóa nhóm nhà cung cấp thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         message: err.message,
-        message: "Xảy ra lôi khi xóa nhà sản xuất!",
+        message: "Xảy ra lôi khi xóa nhóm nhà cung cấp!",
       });
     });
 };
