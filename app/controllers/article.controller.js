@@ -103,6 +103,13 @@ const getOne = async (req, res) => {
     where: {
       id: id,
     },
+    include: [
+      {
+        model: Category,
+        required: true,
+        attributes: ["id", "text"],
+      },
+    ],
   })
     .then((menu) => {
       res.status(statusErrors.success).json({
