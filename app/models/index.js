@@ -52,6 +52,16 @@ db.categoryGroup = require("../models/categoryGroup.model.js")(
 db.category = require("../models/category.model.js")(sequelize, Sequelize);
 db.article = require("../models/article.model.js")(sequelize, Sequelize);
 db.message = require("../models/message.model.js")(sequelize, Sequelize);
+db.producerGroup = require("../models/producerGroup.model.js")(
+  sequelize,
+  Sequelize
+);
+db.producer = require("../models/producer.model.js")(sequelize, Sequelize);
+
+//
+db.producerGroup.hasMany(db.producer);
+db.producer.belongsTo(db.producerGroup);
+//
 
 //
 db.website.hasMany(db.message);
