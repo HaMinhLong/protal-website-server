@@ -62,6 +62,27 @@ db.supplierGroup = require("../models/supplierGroup.model.js")(
   Sequelize
 );
 db.supplier = require("../models/supplier.model.js")(sequelize, Sequelize);
+db.product = require("../models/product.model.js")(sequelize, Sequelize);
+
+//
+db.website.hasMany(db.product);
+db.product.belongsTo(db.website);
+//
+
+//
+db.category.hasMany(db.product);
+db.product.belongsTo(db.category);
+//
+
+//
+db.producer.hasMany(db.product);
+db.product.belongsTo(db.producer);
+//
+
+//
+db.supplier.hasMany(db.product);
+db.product.belongsTo(db.supplier);
+//
 
 //
 db.supplierGroup.hasMany(db.supplier);
