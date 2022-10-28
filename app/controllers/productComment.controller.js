@@ -29,6 +29,7 @@ const getList = async (req, res) => {
         "updatedAt",
       ];
   const status = filters.status || "";
+  const rate = filters.rate || "";
   const name = filters.name || "";
   const phone = filters.phone || "";
   const websiteId = filters.websiteId || "";
@@ -45,6 +46,7 @@ const getList = async (req, res) => {
         { name: { [Op.like]: "%" + name + "%" } },
         { phone: { [Op.like]: "%" + phone + "%" } },
         websiteId !== "" && { websiteId: websiteId },
+        rate !== "" && { rate: rate },
         productId !== "" && { productId: productId },
       ],
       createdAt: {
