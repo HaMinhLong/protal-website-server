@@ -80,8 +80,13 @@ db.order.belongsToMany(db.product, {
 //
 
 //
-db.order.hasMany(db.paymentMethod);
-db.paymentMethod.belongsTo(db.order);
+db.website.hasMany(db.order);
+db.order.belongsTo(db.website);
+//
+
+//
+db.paymentMethod.hasMany(db.order);
+db.order.belongsTo(db.paymentMethod);
 //
 
 //

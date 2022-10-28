@@ -6,6 +6,8 @@ const db = require("../models");
 const Order = db.order;
 const Product = db.product;
 const ProductOrder = db.productOrder;
+const Website = db.website;
+const PaymentMethod = db.paymentMethod;
 const Op = db.Sequelize.Op;
 const statusErrors = require("../errors/status-error");
 
@@ -32,6 +34,8 @@ const getList = async (req, res) => {
       ];
   const status = filters.status || "";
   const name = filters.name || "";
+  const phone = filters.phone || "";
+  const email = filters.email || "";
   const websiteId = filters.websiteId || "";
   const paymentMethodId = filters.paymentMethodId || "";
   const fromDate = filters.fromDate || "2021-01-01T14:06:48.000Z";
@@ -44,6 +48,8 @@ const getList = async (req, res) => {
       [Op.and]: [
         status !== "" && { status: status },
         { name: { [Op.like]: "%" + name + "%" } },
+        { phone: { [Op.like]: "%" + phone + "%" } },
+        { email: { [Op.like]: "%" + email + "%" } },
         websiteId !== "" && { websiteId: websiteId },
         paymentMethodId !== "" && { paymentMethodId: paymentMethodId },
       ],
@@ -55,6 +61,18 @@ const getList = async (req, res) => {
     attributes: attributesQuery,
     offset: ranges[0],
     limit: size,
+    include: [
+      {
+        model: Website,
+        required: true,
+        attributes: ["id", "name"],
+      },
+      {
+        model: PaymentMethod,
+        required: true,
+        attributes: ["id", "name"],
+      },
+    ],
   };
 
   Order.findAndCountAll(options)
@@ -165,6 +183,7 @@ const updateRecord = async (req, res) => {
     paymentMethodId,
     description,
     status,
+    productOrders,
   } = req.body;
 
   Order.update(
@@ -186,7 +205,7 @@ const updateRecord = async (req, res) => {
     }
   )
     .then((order) => {
-      const productOrdersAdd = data.productOrders?.filter(
+      const productOrdersAdd = productOrders?.filter(
         (item) => item.flag === "add"
       );
       const productOrdersCreate = productOrdersAdd?.map((item) => {
