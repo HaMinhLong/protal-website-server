@@ -21,6 +21,7 @@ const getList = async (req, res) => {
     : [
         "id",
         "name",
+        "url",
         "price",
         "negotiablePrice",
         "description",
@@ -176,6 +177,7 @@ const updateRecord = async (req, res) => {
   const { id } = req.params;
   const {
     name,
+    url,
     price,
     negotiablePrice,
     description,
@@ -192,6 +194,7 @@ const updateRecord = async (req, res) => {
     {
       status: status,
       name: name,
+      url: url,
       price: price,
       negotiablePrice: negotiablePrice,
       description: description,

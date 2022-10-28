@@ -12,6 +12,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       field: "name",
     },
+    url: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      field: "url",
+    },
     price: {
       type: DataTypes.INTEGER,
       allowNull: false,

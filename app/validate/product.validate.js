@@ -19,6 +19,7 @@ const validateCreate = () => {
         }
       }),
     body("price").not().isEmpty(),
+    body("url").not().isEmpty(),
     body("websiteId").not().isEmpty(),
     body("categoryId").not().isEmpty(),
     body("producerId").not().isEmpty(),
