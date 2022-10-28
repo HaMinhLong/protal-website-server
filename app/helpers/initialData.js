@@ -101,6 +101,18 @@ initialData = (db) => {
     supplierGroupId: 1,
     status: 1,
   });
+  db.paymentMethod.create({
+    id: 1,
+    name: "Chuyển khoản",
+    description: "",
+    status: 1,
+  });
+  db.paymentMethod.create({
+    id: 2,
+    name: "Thanh toán sau khi nhận hàng",
+    description: "",
+    status: 1,
+  });
 };
 const initialDataServer = {
   initialData: initialData,

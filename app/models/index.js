@@ -63,6 +63,10 @@ db.supplierGroup = require("../models/supplierGroup.model.js")(
 );
 db.supplier = require("../models/supplier.model.js")(sequelize, Sequelize);
 db.product = require("../models/product.model.js")(sequelize, Sequelize);
+db.paymentMethod = require("../models/paymentMethod.model.js")(
+  sequelize,
+  Sequelize
+);
 
 //
 db.website.hasMany(db.product);
