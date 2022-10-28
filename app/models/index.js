@@ -67,6 +67,22 @@ db.paymentMethod = require("../models/paymentMethod.model.js")(
   sequelize,
   Sequelize
 );
+db.order = require("../models/order.model.js")(sequelize, Sequelize);
+db.productOrder = require("./productOrder.model")(sequelize, Sequelize);
+
+//
+db.product.belongsToMany(db.order, {
+  through: "productOrders",
+});
+db.order.belongsToMany(db.product, {
+  through: "productOrders",
+});
+//
+
+//
+db.order.hasMany(db.paymentMethod);
+db.paymentMethod.belongsTo(db.order);
+//
 
 //
 db.website.hasMany(db.product);
