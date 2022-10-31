@@ -2,6 +2,7 @@ const { body } = require("express-validator");
 
 // PROJECT IMPORT
 const db = require("../models");
+const Op = db.Sequelize.Op;
 const Category = db.category;
 
 const validateCreate = () => {
@@ -12,7 +13,7 @@ const validateCreate = () => {
       .custom(async (value, { req }) => {
         const { body } = req;
         const category = await Category.findOne({
-          where: { text: value },
+          where: { [Op.and]: [{ text: value }, { websiteId: body.websiteId }] },
         });
         if (category && value !== body.textOld) {
           return Promise.reject("Chuyên mục đã tồn tại");

@@ -14,7 +14,6 @@ const getList = async (req, res) => {
   const filters = filter ? JSON.parse(filter) : {};
   const ranges = range ? JSON.parse(range) : [0, 20];
   const order = sort ? JSON.parse(sort) : ["createdAt", "DESC"];
-  console.log("order", order);
   const attributesQuery = attributes
     ? attributes.split(",")
     : [
@@ -110,6 +109,32 @@ const getOne = async (req, res) => {
         attributes: ["id", "text"],
       },
     ],
+  })
+    .then((menu) => {
+      res.status(statusErrors.success).json({
+        results: {
+          list: menu,
+        },
+        success: true,
+        error: "",
+        message: "",
+      });
+    })
+    .catch((err) => {
+      res.status(statusErrors.badRequest).json({
+        success: true,
+        error: err.message,
+        message: "Xảy ra lỗi khi lấy thông tin tin tức!",
+      });
+    });
+};
+
+const getOneByUrl = async (req, res) => {
+  const { url } = req.params;
+  Article.findOne({
+    where: {
+      url: url,
+    },
   })
     .then((menu) => {
       res.status(statusErrors.success).json({
@@ -273,6 +298,7 @@ const deleteRecord = async (req, res) => {
 module.exports = {
   getList,
   getOne,
+  getOneByUrl,
   create,
   updateRecord,
   updateStatus,

@@ -11,6 +11,8 @@ module.exports = function (app) {
 
   app.get("/web/v1/article/:id", controller.getOne);
 
+  app.get("/web/v1/article/url/:url", controller.getOneByUrl);
+
   app.post("/web/v1/article", [validate(validateCreate())], controller.create);
 
   app.put(
