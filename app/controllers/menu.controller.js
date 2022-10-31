@@ -35,7 +35,7 @@ const getList = async (req, res) => {
         "updatedAt",
       ];
   const location = filters.location || "";
-  const status = filters.status || "";
+  const status = filters.status !== undefined ? filters?.status : "";
   const text = filters.text || "";
   const websiteId = filters.websiteId || "";
   const fromDate = filters.fromDate || "2021-01-01T14:06:48.000Z";

@@ -32,7 +32,8 @@ const getList = async (req, res) => {
         "createdAt",
         "updatedAt",
       ];
-  const status = filters.status || "";
+  const status = filters.status !== undefined ? filters?.status : "";
+  const url = filters.url || "";
   const title = filters.title || "";
   const websiteId = filters.websiteId || "";
   const categoryId = filters.categoryId || "";
@@ -66,7 +67,10 @@ const getList = async (req, res) => {
       {
         model: Category,
         required: true,
-        attributes: ["id", "text"],
+        attributes: ["id", "text", "url"],
+        where: {
+          [Op.and]: [{ url: { [Op.like]: "%" + url + "%" } }],
+        },
       },
     ],
   };

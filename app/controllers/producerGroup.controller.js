@@ -15,7 +15,7 @@ const getList = async (req, res) => {
   const attributesQuery = attributes
     ? attributes.split(",")
     : ["id", "name", "description", "status", "createdAt", "updatedAt"];
-  const status = filters.status || "";
+  const status = filters.status !== undefined ? filters?.status : "";
   const name = filters.name || "";
   const fromDate = filters.fromDate || "2021-01-01T14:06:48.000Z";
   const toDate = filters.toDate || moment();

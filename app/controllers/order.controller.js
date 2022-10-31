@@ -32,7 +32,7 @@ const getList = async (req, res) => {
         "createdAt",
         "updatedAt",
       ];
-  const status = filters.status || "";
+  const status = filters.status !== undefined ? filters?.status : "";
   const name = filters.name || "";
   const phone = filters.phone || "";
   const email = filters.email || "";

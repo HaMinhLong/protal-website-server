@@ -28,7 +28,7 @@ const getList = async (req, res) => {
         "createdAt",
         "updatedAt",
       ];
-  const status = filters.status || "";
+  const status = filters.status !== undefined ? filters?.status : "";
   const rate = filters.rate || "";
   const name = filters.name || "";
   const phone = filters.phone || "";
