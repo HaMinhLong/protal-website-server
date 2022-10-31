@@ -3,10 +3,9 @@ const moment = require("moment");
 
 // PROJECT IMPORT
 const db = require("../models");
-const Article = db.article;
-const Website = db.website;
-const Category = db.category;
+const Location = db.location;
 const Op = db.Sequelize.Op;
+const Website = db.website;
 const statusErrors = require("../errors/status-error");
 
 const getList = async (req, res) => {
@@ -18,25 +17,18 @@ const getList = async (req, res) => {
     ? attributes.split(",")
     : [
         "id",
-        "title",
-        "description",
-        "content",
-        "url",
-        "author",
-        "source",
-        "label",
-        "images",
+        "name",
+        "mobile",
+        "email",
+        "bankName",
+        "address",
+        "location",
         "websiteId",
-        "categoryId",
         "status",
-        "createdAt",
-        "updatedAt",
       ];
   const status = filters.status !== undefined ? filters?.status : "";
-  const url = filters.url || "";
-  const title = filters.title || "";
+  const name = filters.name || "";
   const websiteId = filters.websiteId || "";
-  const categoryId = filters.categoryId || "";
   const fromDate = filters.fromDate || "2021-01-01T14:06:48.000Z";
   const toDate = filters.toDate || moment();
   const size = ranges[1] - ranges[0];
@@ -46,7 +38,7 @@ const getList = async (req, res) => {
     where: {
       [Op.and]: [
         status !== "" && { status: status },
-        { title: { [Op.like]: "%" + title + "%" } },
+        { name: { [Op.like]: "%" + name + "%" } },
         websiteId !== "" && { websiteId: websiteId },
       ],
       createdAt: {
@@ -63,23 +55,10 @@ const getList = async (req, res) => {
         required: true,
         attributes: ["id", "name"],
       },
-      {
-        model: Category,
-        required: true,
-        attributes: ["id", "text", "url"],
-        where: {
-          [Op.and]: [
-            { url: { [Op.like]: "%" + url + "%" } },
-            categoryId !== "" && {
-              [Op.or]: [{ id: categoryId }, { parent: categoryId }],
-            },
-          ],
-        },
-      },
     ],
   };
 
-  Article.findAndCountAll(options)
+  Location.findAndCountAll(options)
     .then((result) => {
       res.status(statusErrors.success).json({
         results: {
@@ -106,22 +85,23 @@ const getList = async (req, res) => {
 
 const getOne = async (req, res) => {
   const { id } = req.params;
-  Article.findOne({
+  Location.findOne({
     where: {
       id: id,
     },
     include: [
       {
-        model: Category,
+        model: Website,
         required: true,
-        attributes: ["id", "text"],
+        attributes: ["id", "name"],
       },
     ],
   })
-    .then((menu) => {
+    .then((location) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: location,
+          pagination: [],
         },
         success: true,
         error: "",
@@ -132,33 +112,7 @@ const getOne = async (req, res) => {
       res.status(statusErrors.badRequest).json({
         success: true,
         error: err.message,
-        message: "Xảy ra lỗi khi lấy thông tin tin tức!",
-      });
-    });
-};
-
-const getOneByUrl = async (req, res) => {
-  const { url } = req.params;
-  Article.findOne({
-    where: {
-      url: url,
-    },
-  })
-    .then((menu) => {
-      res.status(statusErrors.success).json({
-        results: {
-          list: menu,
-        },
-        success: true,
-        error: "",
-        message: "",
-      });
-    })
-    .catch((err) => {
-      res.status(statusErrors.badRequest).json({
-        success: true,
-        error: err.message,
-        message: "Xảy ra lỗi khi lấy thông tin tin tức!",
+        message: "Xảy ra lỗi khi lấy thông tin địa điểm!",
       });
     });
 };
@@ -166,25 +120,25 @@ const getOneByUrl = async (req, res) => {
 const create = async (req, res) => {
   const data = req.body;
 
-  Article.create({
+  Location.create({
     ...data,
   })
-    .then((menu) => {
+    .then((location) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: location,
           pagination: [],
         },
         success: true,
         error: "",
-        message: "Tạo mới tin tức thành công!",
+        message: "Tạo mới địa điểm thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         error: err.message,
-        message: "Xảy ra lỗi khi tạo mới tin tức!",
+        message: "Xảy ra lỗi khi tạo mới địa điểm!",
       });
     });
 };
@@ -192,32 +146,26 @@ const create = async (req, res) => {
 const updateRecord = async (req, res) => {
   const { id } = req.params;
   const {
-    title,
-    description,
-    content,
-    url,
-    author,
-    source,
-    label,
-    images,
+    name,
+    mobile,
+    email,
+    bankName,
+    address,
+    location,
     websiteId,
-    categoryId,
     status,
   } = req.body;
 
-  Article.update(
+  Location.update(
     {
-      title: title,
-      description: description,
-      content: content,
-      url: url,
-      author: author,
-      source: source,
-      label: label,
-      images: images,
-      websiteId: websiteId,
-      categoryId: categoryId,
       status: status,
+      name: name,
+      mobile: mobile,
+      email: email,
+      bankName: bankName,
+      address: address,
+      location: location,
+      websiteId: websiteId,
     },
     {
       where: {
@@ -225,22 +173,22 @@ const updateRecord = async (req, res) => {
       },
     }
   )
-    .then((menu) => {
+    .then((location) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: location,
           pagination: [],
         },
         success: true,
         error: "",
-        message: "Cập nhật tin tức thành công!",
+        message: "Cập nhật địa điểm thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         error: err.message,
-        message: "Xảy ra lỗi khi cập nhật tin tức!",
+        message: "Xảy ra lỗi khi cập nhật địa điểm!",
       });
     });
 };
@@ -248,7 +196,7 @@ const updateRecord = async (req, res) => {
 const updateStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-  Article.update(
+  Location.update(
     { status: status },
     {
       where: {
@@ -256,10 +204,10 @@ const updateStatus = async (req, res) => {
       },
     }
   )
-    .then((menu) => {
+    .then((location) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: location,
           pagination: [],
         },
         success: true,
@@ -278,27 +226,27 @@ const updateStatus = async (req, res) => {
 
 const deleteRecord = async (req, res) => {
   const { id } = req.params;
-  Article.destroy({
+  Location.destroy({
     where: {
       id: id,
     },
   })
-    .then((menu) => {
+    .then((location) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: location,
           pagination: [],
         },
         success: true,
         error: "",
-        message: "Xóa tin tức thành công!",
+        message: "Xóa địa điểm thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         message: err.message,
-        message: "Xảy ra lôi khi xóa tin tức!",
+        message: "Xảy ra lôi khi xóa địa điểm!",
       });
     });
 };
@@ -306,7 +254,6 @@ const deleteRecord = async (req, res) => {
 module.exports = {
   getList,
   getOne,
-  getOneByUrl,
   create,
   updateRecord,
   updateStatus,

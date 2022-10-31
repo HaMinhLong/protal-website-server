@@ -32,10 +32,20 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: "address",
     },
+    location: {
+      type: DataTypes.STRING(1000),
+      allowNull: false,
+      field: "location",
+    },
     websiteId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       field: "websiteId",
+    },
+    status: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "status",
     },
   });
 
