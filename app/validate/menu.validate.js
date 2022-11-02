@@ -19,7 +19,6 @@ const validateCreate = () => {
           return Promise.reject("Menu website đã tồn tại");
         }
       }),
-    body("icon").not().isEmpty(),
     body("position").not().isEmpty(),
     body("url").not().isEmpty(),
     body("websiteId").not().isEmpty(),

@@ -11,6 +11,8 @@ module.exports = function (app) {
 
   app.get("/web/v1/category/:id", controller.getOne);
 
+  app.get("/web/v1/category/url/:url", controller.getOneByUrl);
+
   app.post("/web/v1/category", [validate(validateCreate())], controller.create);
 
   app.put(

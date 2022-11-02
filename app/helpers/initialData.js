@@ -46,6 +46,8 @@ initialData = (db) => {
     status: 1,
     parent: 0,
     websiteId: 1,
+    categoryId: null,
+    articleId: null,
     droppable: true,
     status: 1,
   });

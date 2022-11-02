@@ -95,6 +95,7 @@ require("./app/routes/website/order.routes")(app);
 require("./app/routes/website/paymentMethod.routes")(app);
 require("./app/routes/website/productComment.routes")(app);
 require("./app/routes/website/location.routes")(app);
+require("./app/routes/website/message.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

@@ -42,6 +42,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       field: "images",
     },
+    isSale: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      field: "isSale",
+    },
     websiteId: {
       type: DataTypes.INTEGER,
       allowNull: false,

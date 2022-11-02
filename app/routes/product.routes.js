@@ -10,6 +10,12 @@ const {
 module.exports = function (app) {
   app.get("/product", [authJwt.verifyToken], controller.getList);
 
+  app.get(
+    "/producer-product",
+    [authJwt.verifyToken],
+    controller.getAllProducerProduct
+  );
+
   app.get("/product/:id", [authJwt.verifyToken], controller.getOne);
 
   app.post(

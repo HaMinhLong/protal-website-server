@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     icon: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
       field: "icon",
     },
     position: {
@@ -51,6 +51,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       field: "websiteId",
+    },
+    categoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: "categoryId",
+    },
+    articleId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: "articleId",
     },
   });
   menu.sync().then(async () => {});

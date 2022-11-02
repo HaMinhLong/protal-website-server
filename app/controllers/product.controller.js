@@ -10,6 +10,8 @@ const Category = db.category;
 const Producer = db.producer;
 const Supplier = db.supplier;
 const statusErrors = require("../errors/status-error");
+const { QueryTypes } = require("sequelize");
+const Sequelize = db.sequelize;
 
 const getList = async (req, res) => {
   const { filter, range, sort, attributes } = req.query;
@@ -32,6 +34,7 @@ const getList = async (req, res) => {
         "producerId",
         "supplierId",
         "status",
+        "isSale",
         "createdAt",
         "updatedAt",
       ];
@@ -76,7 +79,12 @@ const getList = async (req, res) => {
         required: true,
         attributes: ["id", "text", "url"],
         where: {
-          [Op.and]: [{ url: { [Op.like]: "%" + url + "%" } }],
+          [Op.and]: [
+            { url: { [Op.like]: "%" + url + "%" } },
+            categoryId !== "" && {
+              [Op.or]: [{ id: categoryId }, { parent: categoryId }],
+            },
+          ],
         },
       },
       {
@@ -151,6 +159,32 @@ const getOne = async (req, res) => {
     });
 };
 
+const getOneByUrl = async (req, res) => {
+  const { url } = req.params;
+  Product.findOne({
+    where: {
+      url: url,
+    },
+  })
+    .then((menu) => {
+      res.status(statusErrors.success).json({
+        results: {
+          list: menu,
+        },
+        success: true,
+        error: "",
+        message: "",
+      });
+    })
+    .catch((err) => {
+      res.status(statusErrors.badRequest).json({
+        success: true,
+        error: err.message,
+        message: "Xảy ra lỗi khi lấy thông tin sản phẩm!",
+      });
+    });
+};
+
 const create = async (req, res) => {
   const data = req.body;
 
@@ -191,6 +225,7 @@ const updateRecord = async (req, res) => {
     categoryId,
     producerId,
     supplierId,
+    isSale,
     status,
   } = req.body;
 
@@ -207,6 +242,7 @@ const updateRecord = async (req, res) => {
       websiteId: websiteId,
       categoryId: categoryId,
       producerId: producerId,
+      isSale: isSale,
       supplierId: supplierId,
     },
     {
@@ -293,11 +329,46 @@ const deleteRecord = async (req, res) => {
     });
 };
 
+const getAllProducerProduct = async (req, res) => {
+  const { filter } = req.query;
+  const filters = JSON.parse(filter || "{}");
+  const websiteId = Number(filters?.websiteId) || 0;
+  const categoryId = Number(filters?.categoryId) || 0;
+
+  const producers = await Sequelize.query(
+    `SELECT DISTINCT PR.id, PR.name
+    FROM products as P
+    JOIN producers as PR on P."producerId" = PR.id
+    JOIN categories as C on P."categoryId" = C.id
+    WHERE P."websiteId" = :websiteId
+    AND (C."id" = :categoryId OR C."parent" = :categoryId)
+    `,
+    {
+      replacements: {
+        websiteId: websiteId,
+        categoryId: categoryId,
+      },
+      type: QueryTypes.SELECT,
+    }
+  );
+
+  res.status(200).json({
+    results: {
+      list: producers,
+    },
+    success: true,
+    error: "",
+    message: "",
+  });
+};
+
 module.exports = {
   getList,
   getOne,
+  getOneByUrl,
   create,
   updateRecord,
   updateStatus,
   deleteRecord,
+  getAllProducerProduct,
 };

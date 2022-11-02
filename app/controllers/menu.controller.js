@@ -16,7 +16,7 @@ const getList = async (req, res) => {
     ? JSON.parse(sort)
     : [
         ["position", "ASC"],
-        ["updatedAt", "DESC"],
+        ["updatedAt", "ASC"],
       ];
   const attributesQuery = attributes
     ? attributes.split(",")
@@ -31,6 +31,8 @@ const getList = async (req, res) => {
         "droppable",
         "parent",
         "websiteId",
+        "categoryId",
+        "articleId",
         "createdAt",
         "updatedAt",
       ];
@@ -70,9 +72,11 @@ const getList = async (req, res) => {
 
   Menu.findAndCountAll(options)
     .then((result) => {
+      const list = result.rows;
+
       res.status(statusErrors.success).json({
         results: {
-          list: result.rows,
+          list: list,
           pagination: {
             total: result.count,
             pageSize: size,
@@ -149,8 +153,18 @@ const create = async (req, res) => {
 
 const updateRecord = async (req, res) => {
   const { id } = req.params;
-  const { text, url, icon, position, location, parent, websiteId, status } =
-    req.body;
+  const {
+    text,
+    url,
+    icon,
+    position,
+    location,
+    parent,
+    articleId,
+    categoryId,
+    websiteId,
+    status,
+  } = req.body;
 
   Menu.update(
     {
@@ -161,6 +175,8 @@ const updateRecord = async (req, res) => {
       location: location,
       status: status,
       parent: parent,
+      articleId: articleId,
+      categoryId: categoryId,
       websiteId: websiteId,
     },
     {

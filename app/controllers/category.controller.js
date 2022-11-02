@@ -127,6 +127,32 @@ const getOne = async (req, res) => {
     });
 };
 
+const getOneByUrl = async (req, res) => {
+  const { url } = req.params;
+  Category.findOne({
+    where: {
+      url: url,
+    },
+  })
+    .then((menu) => {
+      res.status(statusErrors.success).json({
+        results: {
+          list: menu,
+        },
+        success: true,
+        error: "",
+        message: "",
+      });
+    })
+    .catch((err) => {
+      res.status(statusErrors.badRequest).json({
+        success: true,
+        error: err.message,
+        message: "Xảy ra lỗi khi lấy thông tin chuyên mục!",
+      });
+    });
+};
+
 const create = async (req, res) => {
   const data = req.body;
 
@@ -270,6 +296,7 @@ const deleteRecord = async (req, res) => {
 module.exports = {
   getList,
   getOne,
+  getOneByUrl,
   create,
   updateRecord,
   updateStatus,

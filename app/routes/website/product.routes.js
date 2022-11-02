@@ -11,6 +11,10 @@ module.exports = function (app) {
 
   app.get("/web/v1/product/:id", controller.getOne);
 
+  app.get("/web/v1/product/url/:url", controller.getOneByUrl);
+
+  app.get("web/v1/producer-product", controller.getAllProducerProduct);
+
   app.post("/web/v1/product", [validate(validateCreate())], controller.create);
 
   app.put(

@@ -160,6 +160,16 @@ db.category.belongsTo(db.website);
 //
 
 //
+db.article.hasMany(db.menu);
+db.menu.belongsTo(db.article);
+//
+
+//
+db.category.hasMany(db.menu);
+db.menu.belongsTo(db.category);
+//
+
+//
 db.website.hasMany(db.menu);
 db.menu.belongsTo(db.website);
 //
