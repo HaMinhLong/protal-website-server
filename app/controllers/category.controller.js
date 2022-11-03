@@ -103,15 +103,16 @@ const getList = async (req, res) => {
 
 const getOne = async (req, res) => {
   const { id } = req.params;
+
   Category.findOne({
     where: {
       id: id,
     },
   })
-    .then((menu) => {
+    .then((category) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: category,
         },
         success: true,
         error: "",
@@ -120,7 +121,7 @@ const getOne = async (req, res) => {
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: true,
+        success: falsex,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin chuyên mục!",
       });
@@ -129,24 +130,54 @@ const getOne = async (req, res) => {
 
 const getOneByUrl = async (req, res) => {
   const { url } = req.params;
+  const { findChild } = req.query;
+
   Category.findOne({
     where: {
-      url: url,
+      url: `/${url}`,
     },
   })
-    .then((menu) => {
-      res.status(statusErrors.success).json({
-        results: {
-          list: menu,
-        },
-        success: true,
-        error: "",
-        message: "",
-      });
+    .then((category) => {
+      if (findChild) {
+        Category.findAndCountAll({
+          where: {
+            parent: category?.id,
+          },
+        })
+          .then((child) => {
+            res.status(statusErrors.success).json({
+              results: {
+                list: {
+                  category,
+                  children: child.rows,
+                },
+              },
+              success: true,
+              error: "",
+              message: "",
+            });
+          })
+          .catch((err) => {
+            res.status(statusErrors.badRequest).json({
+              success: false,
+              error: err.message,
+              message: "Xảy ra lỗi khi lấy thông tin chuyên mục!",
+            });
+          });
+      } else {
+        res.status(statusErrors.success).json({
+          results: {
+            list: category,
+          },
+          success: true,
+          error: "",
+          message: "",
+        });
+      }
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: true,
+        success: false,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin chuyên mục!",
       });
@@ -161,10 +192,10 @@ const create = async (req, res) => {
     parent: data.parent || 0,
     droppable: true,
   })
-    .then((menu) => {
+    .then((category) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: category,
           pagination: [],
         },
         success: true,
@@ -215,10 +246,10 @@ const updateRecord = async (req, res) => {
       },
     }
   )
-    .then((menu) => {
+    .then((category) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: category,
           pagination: [],
         },
         success: true,
@@ -246,10 +277,10 @@ const updateStatus = async (req, res) => {
       },
     }
   )
-    .then((menu) => {
+    .then((category) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: category,
           pagination: [],
         },
         success: true,
@@ -273,10 +304,10 @@ const deleteRecord = async (req, res) => {
       id: id,
     },
   })
-    .then((menu) => {
+    .then((category) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: category,
           pagination: [],
         },
         success: true,

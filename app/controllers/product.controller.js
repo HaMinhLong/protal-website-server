@@ -8,6 +8,8 @@ const Op = db.Sequelize.Op;
 const Website = db.website;
 const Category = db.category;
 const Producer = db.producer;
+const ProductClass1 = db.productClass1;
+const ProductClass2 = db.productClass2;
 const Supplier = db.supplier;
 const statusErrors = require("../errors/status-error");
 const { QueryTypes } = require("sequelize");
@@ -56,7 +58,6 @@ const getList = async (req, res) => {
         status !== "" && { status: status },
         { name: { [Op.like]: "%" + name + "%" } },
         websiteId !== "" && { websiteId: websiteId },
-        categoryId !== "" && { categoryId: categoryId },
         producerId !== "" && { producerId: producerId },
         supplierId !== "" && { supplierId: supplierId },
       ],
@@ -137,6 +138,21 @@ const getOne = async (req, res) => {
         required: true,
         attributes: ["id", "text"],
       },
+      {
+        model: Producer,
+        required: true,
+        attributes: ["id", "name"],
+      },
+      {
+        model: ProductClass1,
+        required: false,
+        attributes: ["id", "name"],
+      },
+      {
+        model: ProductClass2,
+        required: false,
+        attributes: ["id", "name"],
+      },
     ],
   })
     .then((product) => {
@@ -152,7 +168,7 @@ const getOne = async (req, res) => {
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: true,
+        success: falsex,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin sản phẩm!",
       });
@@ -165,6 +181,28 @@ const getOneByUrl = async (req, res) => {
     where: {
       url: url,
     },
+    include: [
+      {
+        model: Category,
+        required: true,
+        attributes: ["id", "text"],
+      },
+      {
+        model: Producer,
+        required: true,
+        attributes: ["id", "name"],
+      },
+      {
+        model: ProductClass1,
+        required: false,
+        attributes: ["id", "name"],
+      },
+      {
+        model: ProductClass2,
+        required: false,
+        attributes: ["id", "name"],
+      },
+    ],
   })
     .then((menu) => {
       res.status(statusErrors.success).json({
@@ -178,7 +216,7 @@ const getOneByUrl = async (req, res) => {
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: true,
+        success: falsex,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin sản phẩm!",
       });
@@ -192,6 +230,31 @@ const create = async (req, res) => {
     ...data,
   })
     .then((product) => {
+      const productClass1Add = data.productClass1s?.filter(
+        (item) => item.flag === "add"
+      );
+      const productClass2Add = data.productClass2s?.filter(
+        (item) => item.flag === "add"
+      );
+
+      const productClass1Create = productClass1Add?.map((item) => {
+        return {
+          name: item?.name,
+          images: null,
+          productId: product.id,
+        };
+      });
+      ProductClass1.bulkCreate(productClass1Create);
+
+      const productClass2Create = productClass2Add?.map((item) => {
+        return {
+          name: item?.name,
+          images: null,
+          productId: product.id,
+        };
+      });
+      ProductClass2.bulkCreate(productClass2Create);
+
       res.status(statusErrors.success).json({
         results: {
           list: product,
@@ -227,6 +290,8 @@ const updateRecord = async (req, res) => {
     supplierId,
     isSale,
     status,
+    productClass1s,
+    productClass2s,
   } = req.body;
 
   Product.update(
@@ -252,6 +317,62 @@ const updateRecord = async (req, res) => {
     }
   )
     .then((product) => {
+      const productClass1Add = productClass1s?.filter(
+        (item) => item.flag === "add"
+      );
+      const productClass2Add = productClass2s?.filter(
+        (item) => item.flag === "add"
+      );
+
+      const productClass1Create = productClass1Add?.map((item) => {
+        return {
+          name: item?.name,
+          productId: id,
+        };
+      });
+      ProductClass1.bulkCreate(productClass1Create);
+
+      const productClass2Create = productClass2Add?.map((item) => {
+        return {
+          name: item?.name,
+          productId: id,
+        };
+      });
+      ProductClass2.bulkCreate(productClass2Create);
+
+      const productClass1sUpdate = productClass1s?.filter(
+        (item) => item.flag === "update"
+      );
+      const productClass2sUpdate = productClass2s?.filter(
+        (item) => item.flag === "update"
+      );
+
+      productClass1sUpdate.forEach((element) => {
+        ProductClass1.update(
+          {
+            name: element.name,
+          },
+          {
+            where: {
+              id: element.id,
+            },
+          }
+        );
+      });
+
+      productClass2sUpdate.forEach((element) => {
+        ProductClass2.update(
+          {
+            name: element.name,
+          },
+          {
+            where: {
+              id: element.id,
+            },
+          }
+        );
+      });
+
       res.status(statusErrors.success).json({
         results: {
           list: product,
@@ -310,6 +431,16 @@ const deleteRecord = async (req, res) => {
     },
   })
     .then((product) => {
+      ProductClass1.destroy({
+        where: {
+          productId: id,
+        },
+      });
+      ProductClass2.destroy({
+        where: {
+          productId: id,
+        },
+      });
       res.status(statusErrors.success).json({
         results: {
           list: product,

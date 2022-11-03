@@ -127,7 +127,7 @@ const getOne = async (req, res) => {
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: true,
+        success: falsex,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin đơn hàng!",
       });
@@ -216,7 +216,7 @@ const updateRecord = async (req, res) => {
       });
       ProductOrder.bulkCreate(productOrdersCreate);
 
-      const productOrdersUpdate = productOrdersAdd?.filter(
+      const productOrdersUpdate = productOrders?.filter(
         (item) => item.flag === "update"
       );
       productOrdersUpdate.forEach((element) => {

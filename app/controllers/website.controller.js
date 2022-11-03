@@ -103,7 +103,7 @@ const getOne = async (req, res) => {
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: true,
+        success: falsex,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin website!",
       });

@@ -70,6 +70,18 @@ db.paymentMethod = require("../models/paymentMethod.model.js")(
 db.order = require("../models/order.model.js")(sequelize, Sequelize);
 db.productOrder = require("./productOrder.model")(sequelize, Sequelize);
 db.productComment = require("./productComment.model")(sequelize, Sequelize);
+db.productClass1 = require("./productClass1.model")(sequelize, Sequelize);
+db.productClass2 = require("./productClass2.model")(sequelize, Sequelize);
+
+//
+db.product.hasMany(db.productClass1);
+db.productClass1.belongsTo(db.product);
+//
+
+//
+db.product.hasMany(db.productClass2);
+db.productClass2.belongsTo(db.product);
+//
 
 //
 db.website.hasMany(db.productComment);
