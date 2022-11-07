@@ -87,7 +87,6 @@ const getList = async (req, res) => {
           },
         },
         success: true,
-        message: "",
       });
     })
     .catch((err) => {
@@ -119,7 +118,6 @@ const getOne = async (req, res) => {
           list: order,
         },
         success: true,
-        message: "",
       });
     })
     .catch((err) => {

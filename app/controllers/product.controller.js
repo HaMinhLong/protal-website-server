@@ -114,7 +114,6 @@ const getList = async (req, res) => {
           },
         },
         success: true,
-        message: "",
       });
     })
     .catch((err) => {
@@ -179,7 +178,6 @@ const getOne = async (req, res) => {
           list: product,
         },
         success: true,
-        message: "",
       });
     })
     .catch((err) => {
@@ -232,15 +230,18 @@ const getOneByUrl = async (req, res) => {
           },
         ],
       },
+      {
+        model: ProductPrice,
+        required: false,
+      },
     ],
   })
     .then((product) => {
       res.status(statusErrors.success).json({
         results: {
-          list: { ...product, productPrices: [] },
+          list: product,
         },
         success: true,
-        message: "",
       });
     })
     .catch((err) => {

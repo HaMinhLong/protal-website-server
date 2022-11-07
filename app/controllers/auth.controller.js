@@ -62,7 +62,6 @@ const signIn = (req, res) => {
           },
         },
         success: true,
-        message: "",
       });
     })
     .catch((err) => {

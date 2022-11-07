@@ -91,7 +91,6 @@ const getList = async (req, res) => {
           },
         },
         success: true,
-        message: "",
       });
     })
     .catch((err) => {
@@ -123,7 +122,6 @@ const getOne = async (req, res) => {
           list: menu,
         },
         success: true,
-        message: "",
       });
     })
     .catch((err) => {
@@ -148,7 +146,6 @@ const getOneByUrl = async (req, res) => {
           list: menu,
         },
         success: true,
-        message: "",
       });
     })
     .catch((err) => {
