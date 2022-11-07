@@ -72,6 +72,16 @@ db.productOrder = require("./productOrder.model")(sequelize, Sequelize);
 db.productComment = require("./productComment.model")(sequelize, Sequelize);
 db.productClass1 = require("./productClass1.model")(sequelize, Sequelize);
 db.productClass2 = require("./productClass2.model")(sequelize, Sequelize);
+db.productPrice = require("./productPrice.model")(sequelize, Sequelize);
+
+//
+db.productClass1.belongsToMany(db.productClass2, {
+  through: "productPrices",
+});
+db.productClass2.belongsToMany(db.productClass1, {
+  through: "productPrices",
+});
+//
 
 //
 db.product.hasMany(db.productClass1);

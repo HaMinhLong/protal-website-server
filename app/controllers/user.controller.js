@@ -82,7 +82,6 @@ const getList = async (req, res) => {
           },
         },
         success: true,
-        error: "",
         message: "",
       });
     })
@@ -113,10 +112,8 @@ const getOne = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: user,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "",
       });
     })
@@ -213,10 +210,8 @@ const updateRecord = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: user,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Cập nhật tài khoản thành công!",
       });
     })
@@ -244,10 +239,8 @@ const updateStatus = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: user,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Cập nhật trạng thái thành công!",
       });
     })
@@ -271,10 +264,8 @@ const deleteRecord = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: user,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Xóa tài khoản thành công!",
       });
     })
@@ -302,10 +293,8 @@ const changePasswordLogin = (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: user,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Đổi mật khẩu thành công!",
       });
     })
@@ -333,10 +322,8 @@ const changePasswordNotLogin = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: user,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Đổi mật khẩu thành công!",
       });
     })

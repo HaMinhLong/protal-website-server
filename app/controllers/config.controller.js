@@ -78,10 +78,8 @@ const create = async (req, res) => {
         res.status(statusErrors.success).json({
           results: {
             list: config,
-            pagination: [],
           },
           success: true,
-          error: "",
           message: "Tạo mới cấu hình thành công!",
         });
       })
@@ -123,10 +121,8 @@ const updateRecord = async (req, res) => {
         res.status(statusErrors.success).json({
           results: {
             list: config,
-            pagination: [],
           },
           success: true,
-          error: "",
           message: "Cập nhật cấu hình thành công!",
         });
       })
@@ -151,7 +147,6 @@ const deleteRecord = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: config,
-          pagination: [],
         },
         success: true,
         error: "",
@@ -161,7 +156,7 @@ const deleteRecord = async (req, res) => {
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
-        message: err.message,
+        error: err.message,
         message: "Xảy ra lôi khi xóa cấu hình!",
       });
     });

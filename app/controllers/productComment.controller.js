@@ -83,7 +83,6 @@ const getList = async (req, res) => {
           },
         },
         success: true,
-        error: "",
         message: "",
       });
     })
@@ -107,16 +106,14 @@ const getOne = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: productComment,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: falsex,
+        success: false,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin bình luận sản phẩm!",
       });
@@ -133,10 +130,8 @@ const create = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: productComment,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Tạo mới bình luận sản phẩm thành công!",
       });
     })
@@ -173,10 +168,8 @@ const updateRecord = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: productComment,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Cập nhật bình luận sản phẩm thành công!",
       });
     })
@@ -204,10 +197,8 @@ const updateStatus = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: productComment,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Cập nhật trạng thái thành công!",
       });
     })
@@ -231,17 +222,15 @@ const deleteRecord = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: productComment,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Xóa bình luận sản phẩm thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
-        message: err.message,
+        error: err.message,
         message: "Xảy ra lôi khi xóa bình luận sản phẩm!",
       });
     });

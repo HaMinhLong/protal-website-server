@@ -72,7 +72,6 @@ const getList = async (req, res) => {
           },
         },
         success: true,
-        error: "",
         message: "",
       });
     })
@@ -96,16 +95,14 @@ const getOne = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: message,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: falsex,
+        success: false,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin liên hệ!",
       });
@@ -122,10 +119,8 @@ const create = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: message,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Tạo mới liên hệ thành công!",
       });
     })
@@ -161,10 +156,8 @@ const updateRecord = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: message,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Cập nhật liên hệ thành công!",
       });
     })
@@ -192,10 +185,8 @@ const updateStatus = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: message,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Cập nhật trạng thái thành công!",
       });
     })
@@ -219,17 +210,15 @@ const deleteRecord = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: message,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Xóa liên hệ thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
-        message: err.message,
+        error: err.message,
         message: "Xảy ra lôi khi xóa liên hệ!",
       });
     });

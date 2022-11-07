@@ -113,7 +113,6 @@ const getList = async (req, res) => {
           },
         },
         success: true,
-        error: "",
         message: "",
       });
     })
@@ -159,16 +158,14 @@ const getOne = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: product,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: falsex,
+        success: false,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin sản phẩm!",
       });
@@ -210,13 +207,12 @@ const getOneByUrl = async (req, res) => {
           list: menu,
         },
         success: true,
-        error: "",
         message: "",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: falsex,
+        success: false,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin sản phẩm!",
       });
@@ -258,10 +254,8 @@ const create = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: product,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Tạo mới sản phẩm thành công!",
       });
     })
@@ -341,10 +335,10 @@ const updateRecord = async (req, res) => {
       ProductClass2.bulkCreate(productClass2Create);
 
       const productClass1sUpdate = productClass1s?.filter(
-        (item) => item.flag === "update"
+        (item) => item.flag !== "add" && item.flag !== "delete"
       );
       const productClass2sUpdate = productClass2s?.filter(
-        (item) => item.flag === "update"
+        (item) => item.flag !== "add" && item.flag !== "delete"
       );
 
       productClass1sUpdate.forEach((element) => {
@@ -373,13 +367,29 @@ const updateRecord = async (req, res) => {
         );
       });
 
+      const productClass1Delete = productClass1s?.map((item) => {
+        if (item.flag === "delete") return item?.id;
+      });
+      const productClass2Delete = productClass2s?.map((item) => {
+        if (item.flag === "delete") return item?.id;
+      });
+
+      ProductClass1.destroy({
+        where: {
+          id: { [Op.in]: productClass1Delete },
+        },
+      });
+      ProductClass2.destroy({
+        where: {
+          id: { [Op.in]: productClass2Delete },
+        },
+      });
+
       res.status(statusErrors.success).json({
         results: {
           list: product,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Cập nhật sản phẩm thành công!",
       });
     })
@@ -407,10 +417,8 @@ const updateStatus = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: product,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Cập nhật trạng thái thành công!",
       });
     })
@@ -444,17 +452,15 @@ const deleteRecord = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: product,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Xóa sản phẩm thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
-        message: err.message,
+        error: err.message,
         message: "Xảy ra lôi khi xóa sản phẩm!",
       });
     });

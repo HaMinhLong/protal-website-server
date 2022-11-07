@@ -21,10 +21,8 @@ const signUp = (req, res) => {
       res.json({
         results: {
           list: user,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Đăng ký tài khoản thành công!",
       });
     })
@@ -64,7 +62,6 @@ const signIn = (req, res) => {
           },
         },
         success: true,
-        error: "",
         message: "",
       });
     })
@@ -98,7 +95,6 @@ const verifyToken = (req, res) => {
     } else {
       return res.status(statusErrors.success).json({
         success: true,
-        error: "",
         message: "Authorized!",
       });
     }
@@ -111,7 +107,6 @@ const currentUser = (req, res) => {
     res.status(statusErrors.success).json({
       results: {
         list: user,
-        pagination: [],
       },
       success: true,
       error: "",

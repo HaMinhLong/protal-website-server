@@ -68,7 +68,6 @@ const getList = async (req, res) => {
           },
         },
         success: true,
-        error: "",
         message: "",
       });
     })
@@ -92,16 +91,14 @@ const getOne = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: supplier,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
-        success: falsex,
+        success: false,
         error: err.message,
         message: "Xảy ra lỗi khi lấy thông tin nhà cung cấp!",
       });
@@ -118,10 +115,8 @@ const create = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: supplier,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Tạo mới nhà cung cấp thành công!",
       });
     })
@@ -155,10 +150,8 @@ const updateRecord = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: supplier,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Cập nhật nhà cung cấp thành công!",
       });
     })
@@ -186,10 +179,8 @@ const updateStatus = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: supplier,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Cập nhật trạng thái thành công!",
       });
     })
@@ -213,17 +204,15 @@ const deleteRecord = async (req, res) => {
       res.status(statusErrors.success).json({
         results: {
           list: supplier,
-          pagination: [],
         },
         success: true,
-        error: "",
         message: "Xóa nhà cung cấp thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
-        message: err.message,
+        error: err.message,
         message: "Xảy ra lôi khi xóa nhà cung cấp!",
       });
     });
