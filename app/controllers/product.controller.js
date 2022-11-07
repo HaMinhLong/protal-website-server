@@ -10,6 +10,7 @@ const Category = db.category;
 const Producer = db.producer;
 const ProductClass1 = db.productClass1;
 const ProductClass2 = db.productClass2;
+const ProductPrice = db.productPrice;
 const Supplier = db.supplier;
 const statusErrors = require("../errors/status-error");
 const { QueryTypes } = require("sequelize");
@@ -146,11 +147,29 @@ const getOne = async (req, res) => {
         model: ProductClass1,
         required: false,
         attributes: ["id", "name"],
+        include: [
+          {
+            model: ProductClass2,
+            require: false,
+            attributes: ["id", "name"],
+          },
+        ],
       },
       {
         model: ProductClass2,
         required: false,
         attributes: ["id", "name"],
+        include: [
+          {
+            model: ProductClass1,
+            require: false,
+            attributes: ["id", "name"],
+          },
+        ],
+      },
+      {
+        model: ProductPrice,
+        required: false,
       },
     ],
   })
@@ -193,18 +212,32 @@ const getOneByUrl = async (req, res) => {
         model: ProductClass1,
         required: false,
         attributes: ["id", "name"],
+        include: [
+          {
+            model: ProductClass2,
+            require: false,
+            attributes: ["id", "name"],
+          },
+        ],
       },
       {
         model: ProductClass2,
         required: false,
         attributes: ["id", "name"],
+        include: [
+          {
+            model: ProductClass1,
+            require: false,
+            attributes: ["id", "name"],
+          },
+        ],
       },
     ],
   })
-    .then((menu) => {
+    .then((product) => {
       res.status(statusErrors.success).json({
         results: {
-          list: menu,
+          list: { ...product, productPrices: [] },
         },
         success: true,
         message: "",
@@ -226,6 +259,7 @@ const create = async (req, res) => {
     ...data,
   })
     .then((product) => {
+      // PRODUCT CLASS CREATE
       const productClass1Add = data.productClass1s?.filter(
         (item) => item.flag === "add"
       );
@@ -233,23 +267,35 @@ const create = async (req, res) => {
         (item) => item.flag === "add"
       );
 
-      const productClass1Create = productClass1Add?.map((item) => {
-        return {
-          name: item?.name,
-          images: null,
-          productId: product.id,
-        };
+      ProductClass1.bulkCreate(
+        productClass1Add?.map((item) => {
+          return { name: item?.name, images: null, productId: product.id };
+        })
+      ).then((class1) => {
+        ProductClass2.bulkCreate(
+          productClass2Add?.map((item) => {
+            return { name: item?.name, images: null, productId: product.id };
+          })
+        ).then((class2) => {
+          const productPricesAdd = data.productPrices?.filter(
+            (item) => item.flag === "add"
+          );
+          ProductPrice.bulkCreate(
+            productPricesAdd?.map((item) => {
+              return {
+                price: item?.price,
+                negotiablePrice: item?.negotiablePrice,
+                amount: item?.amount,
+                productClass1Id: item?.productClass1Id,
+                productClass2Id: item?.productClass2Id,
+                productId: product.id,
+              };
+            })
+          );
+        });
       });
-      ProductClass1.bulkCreate(productClass1Create);
 
-      const productClass2Create = productClass2Add?.map((item) => {
-        return {
-          name: item?.name,
-          images: null,
-          productId: product.id,
-        };
-      });
-      ProductClass2.bulkCreate(productClass2Create);
+      // PRODUCT CLASS CREATE
 
       res.status(statusErrors.success).json({
         results: {
@@ -286,6 +332,7 @@ const updateRecord = async (req, res) => {
     status,
     productClass1s,
     productClass2s,
+    productPrices,
   } = req.body;
 
   Product.update(
@@ -311,6 +358,7 @@ const updateRecord = async (req, res) => {
     }
   )
     .then((product) => {
+      // PRODUCT CLASS CREATE
       const productClass1Add = productClass1s?.filter(
         (item) => item.flag === "add"
       );
@@ -318,22 +366,47 @@ const updateRecord = async (req, res) => {
         (item) => item.flag === "add"
       );
 
-      const productClass1Create = productClass1Add?.map((item) => {
-        return {
-          name: item?.name,
-          productId: id,
-        };
-      });
-      ProductClass1.bulkCreate(productClass1Create);
+      ProductClass1.bulkCreate(
+        productClass1Add?.map((item) => {
+          return {
+            id: item?.id,
+            name: item?.name,
+            images: null,
+            productId: id,
+          };
+        })
+      ).then((class1) => {
+        ProductClass2.bulkCreate(
+          productClass2Add?.map((item) => {
+            return {
+              id: item?.id,
+              name: item?.name,
+              images: null,
+              productId: id,
+            };
+          })
+        ).then((class2) => {
+          const productPricesAdd = productPrices?.filter(
+            (item) => item.flag === "add"
+          );
 
-      const productClass2Create = productClass2Add?.map((item) => {
-        return {
-          name: item?.name,
-          productId: id,
-        };
+          ProductPrice.bulkCreate(
+            productPricesAdd?.map((item) => {
+              return {
+                price: item?.price,
+                negotiablePrice: item?.negotiablePrice,
+                amount: item?.amount,
+                productClass1Id: item?.productClass1Id,
+                productClass2Id: item?.productClass2Id,
+                productId: id,
+              };
+            })
+          );
+        });
       });
-      ProductClass2.bulkCreate(productClass2Create);
+      // PRODUCT CLASS CREATE
 
+      // PRODUCT CLASS UPDATE
       const productClass1sUpdate = productClass1s?.filter(
         (item) => item.flag !== "add" && item.flag !== "delete"
       );
@@ -341,32 +414,54 @@ const updateRecord = async (req, res) => {
         (item) => item.flag !== "add" && item.flag !== "delete"
       );
 
-      productClass1sUpdate.forEach((element) => {
+      productClass1sUpdate.forEach((item) => {
         ProductClass1.update(
           {
-            name: element.name,
+            name: item.name,
           },
           {
             where: {
-              id: element.id,
+              id: item.id,
             },
           }
         );
       });
 
-      productClass2sUpdate.forEach((element) => {
+      productClass2sUpdate.forEach((item) => {
         ProductClass2.update(
           {
-            name: element.name,
+            name: item.name,
           },
           {
             where: {
-              id: element.id,
+              id: item.id,
             },
           }
         );
       });
+      // PRODUCT CLASS UPDATE
 
+      // PRODUCT PRICE UPDATE
+      const productPricesUpdate = productPrices?.filter(
+        (item) => item.flag !== "add" && item.flag !== "delete"
+      );
+      productPricesUpdate.forEach((item) => {
+        ProductPrice.update(
+          {
+            price: item?.price,
+            negotiablePrice: item?.negotiablePrice,
+            amount: item?.amount,
+          },
+          {
+            where: {
+              id: item.id,
+            },
+          }
+        );
+      });
+      // PRODUCT PRICE UPDATE
+
+      // PRODUCT CLASS DELETE
       const productClass1Delete = productClass1s?.map((item) => {
         if (item.flag === "delete") return item?.id;
       });
@@ -384,6 +479,22 @@ const updateRecord = async (req, res) => {
           id: { [Op.in]: productClass2Delete },
         },
       });
+      // PRODUCT CLASS DELETE
+
+      // PRODUCT PRICES DELETE
+      ProductPrice.destroy({
+        where: {
+          [Op.or]: [
+            {
+              productClass1Id: { [Op.in]: productClass1Delete },
+            },
+            {
+              productClass2Id: { [Op.in]: productClass2Delete },
+            },
+          ],
+        },
+      });
+      // PRODUCT PRICES DELETE
 
       res.status(statusErrors.success).json({
         results: {
@@ -445,6 +556,11 @@ const deleteRecord = async (req, res) => {
         },
       });
       ProductClass2.destroy({
+        where: {
+          productId: id,
+        },
+      });
+      ProductPrice.destroy({
         where: {
           productId: id,
         },

@@ -82,6 +82,10 @@ db.productClass2.belongsToMany(db.productClass1, {
   through: "productPrices",
 });
 //
+db.product.hasMany(db.productPrice);
+db.productPrice.belongsTo(db.product);
+//
+//
 
 //
 db.product.hasMany(db.productClass1);

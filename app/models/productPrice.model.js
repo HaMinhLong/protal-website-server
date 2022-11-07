@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       field: "productClass2Id",
     },
+    productId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: "productId",
+    },
   });
   ProductPrice.sync().then(async () => {});
   return ProductPrice;
