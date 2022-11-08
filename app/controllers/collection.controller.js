@@ -3,44 +3,35 @@ const moment = require("moment");
 
 // PROJECT IMPORT
 const db = require("../models");
+const Collection = db.collection;
+const Op = db.Sequelize.Op;
+const CollectionProduct = db.collectionProduct;
+const Product = db.product;
 const Category = db.category;
 const Website = db.website;
-const CategoryGroup = db.categoryGroup;
-const Op = db.Sequelize.Op;
 const statusErrors = require("../errors/status-error");
 
 const getList = async (req, res) => {
   const { filter, range, sort, attributes } = req.query;
   const filters = filter ? JSON.parse(filter) : {};
   const ranges = range ? JSON.parse(range) : [0, 20];
-  const order = sort
-    ? JSON.parse(sort)
-    : [
-        ["position", "ASC"],
-        ["updatedAt", "DESC"],
-      ];
+  const order = sort ? JSON.parse(sort) : ["createdAt", "DESC"];
   const attributesQuery = attributes
     ? attributes.split(",")
     : [
         "id",
-        "text",
+        "name",
         "description",
-        "url",
-        "position",
-        "parent",
-        "droppable",
-        "isHome",
-        "images",
         "websiteId",
-        "categoryGroupId",
+        "categoryId",
         "status",
         "createdAt",
         "updatedAt",
       ];
   const status = filters.status !== undefined ? filters?.status : "";
-  const text = filters.text || "";
+  const name = filters.name || "";
   const websiteId = filters.websiteId || "";
-  const categoryGroupId = filters.categoryGroupId || "";
+  const categoryId = filters.categoryId || "";
   const fromDate = filters.fromDate || "2021-01-01T14:06:48.000Z";
   const toDate = filters.toDate || moment();
   const size = ranges[1] - ranges[0];
@@ -50,15 +41,15 @@ const getList = async (req, res) => {
     where: {
       [Op.and]: [
         status !== "" && { status: status },
-        { text: { [Op.like]: "%" + text + "%" } },
+        { name: { [Op.like]: "%" + name + "%" } },
         websiteId !== "" && { websiteId: websiteId },
-        categoryGroupId !== "" && { categoryGroupId: categoryGroupId },
+        categoryId !== "" && { categoryId: categoryId },
       ],
       createdAt: {
         [Op.between]: [fromDate, toDate],
       },
     },
-    order: order,
+    order: [order],
     attributes: attributesQuery,
     offset: ranges[0],
     limit: size,
@@ -69,14 +60,14 @@ const getList = async (req, res) => {
         attributes: ["id", "name"],
       },
       {
-        model: CategoryGroup,
+        model: Category,
         required: true,
-        attributes: ["id", "name"],
+        attributes: ["id", "text"],
       },
     ],
   };
 
-  Category.findAndCountAll(options)
+  Collection.findAndCountAll(options)
     .then((result) => {
       res.status(statusErrors.success).json({
         results: {
@@ -101,16 +92,27 @@ const getList = async (req, res) => {
 
 const getOne = async (req, res) => {
   const { id } = req.params;
-
-  Category.findOne({
+  Collection.findOne({
     where: {
       id: id,
     },
+    include: [
+      {
+        model: Category,
+        required: true,
+        attributes: ["id", "text"],
+      },
+      {
+        model: Product,
+        required: true,
+        attributes: ["id", "name", "price", "negotiablePrice", "images"],
+      },
+    ],
   })
-    .then((category) => {
+    .then((collection) => {
       res.status(statusErrors.success).json({
         results: {
-          list: category,
+          list: collection,
         },
         success: true,
       });
@@ -119,63 +121,51 @@ const getOne = async (req, res) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         error: err.message,
-        message: "Xảy ra lỗi khi lấy thông tin chuyên mục!",
+        message: "Xảy ra lỗi khi lấy thông tin bộ danh sách!",
       });
     });
 };
 
 const getOneByUrl = async (req, res) => {
   const { url } = req.params;
-  const { findChild } = req.query;
-
-  Category.findOne({
-    where: {
-      url: `/${url}`,
-    },
+  Collection.findOne({
+    include: [
+      {
+        model: Category,
+        required: true,
+        attributes: ["id", "text", "url"],
+        where: {
+          url: `/${url}`,
+        },
+      },
+      {
+        model: Product,
+        required: true,
+        attributes: [
+          "id",
+          "name",
+          "price",
+          "isSale",
+          "negotiablePrice",
+          "images",
+          "url",
+        ],
+      },
+    ],
   })
-    .then((category) => {
-      if (findChild) {
-        Category.findAndCountAll({
-          where: {
-            parent: category?.id,
-          },
-        })
-          .then((child) => {
-            res.status(statusErrors.success).json({
-              results: {
-                list: {
-                  category,
-                  children: child.rows,
-                },
-              },
-              success: true,
-              error: "",
-              message: "",
-            });
-          })
-          .catch((err) => {
-            res.status(statusErrors.badRequest).json({
-              success: false,
-              error: err.message,
-              message: "Xảy ra lỗi khi lấy thông tin chuyên mục!",
-            });
-          });
-      } else {
-        res.status(statusErrors.success).json({
-          results: {
-            list: category,
-          },
-          success: true,
-          error: "",
-          message: "",
-        });
-      }
+    .then((menu) => {
+      res.status(statusErrors.success).json({
+        results: {
+          list: menu,
+        },
+        success: true,
+      });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         error: err.message,
-        message: "Xảy ra lỗi khi lấy thông tin chuyên mục!",
+        message: "Xảy ra lỗi khi lấy thông tin bộ danh sách!",
       });
     });
 };
@@ -183,25 +173,35 @@ const getOneByUrl = async (req, res) => {
 const create = async (req, res) => {
   const data = req.body;
 
-  Category.create({
+  Collection.create({
     ...data,
-    parent: data.parent || 0,
-    droppable: true,
   })
-    .then((category) => {
+    .then((collection) => {
+      const collectionProductsAdd = data.collectionProducts?.filter(
+        (item) => item.flag === "add"
+      );
+
+      console.log("collectionProductsAdd", collectionProductsAdd);
+
+      CollectionProduct.bulkCreate(
+        collectionProductsAdd?.map((item) => {
+          return { productId: item?.productId, collectionId: collection?.id };
+        })
+      );
+
       res.status(statusErrors.success).json({
         results: {
-          list: category,
+          list: collection,
         },
         success: true,
-        message: "Tạo mới chuyên mục thành công!",
+        message: "Tạo mới bộ danh sách thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         error: err.message,
-        message: "Xảy ra lỗi khi tạo mới chuyên mục!",
+        message: "Xảy ra lỗi khi tạo mới bộ danh sách!",
       });
     });
 };
@@ -209,30 +209,21 @@ const create = async (req, res) => {
 const updateRecord = async (req, res) => {
   const { id } = req.params;
   const {
-    text,
+    name,
     description,
-    url,
-    isHome,
-    position,
-    images,
-    parent,
     websiteId,
-    categoryGroupId,
+    categoryId,
     status,
+    collectionProducts,
   } = req.body;
 
-  Category.update(
+  Collection.update(
     {
-      text: text,
-      description: description,
-      url: url,
-      position: position,
-      parent: parent,
-      isHome: isHome,
-      images: images,
-      websiteId: websiteId,
-      categoryGroupId: categoryGroupId,
       status: status,
+      name: name,
+      description: description,
+      websiteId: websiteId,
+      categoryId: categoryId,
     },
     {
       where: {
@@ -240,20 +231,39 @@ const updateRecord = async (req, res) => {
       },
     }
   )
-    .then((category) => {
+    .then((collection) => {
+      const collectionProductsAdd = collectionProducts?.filter(
+        (item) => item.flag === "add"
+      );
+
+      CollectionProduct.bulkCreate(
+        collectionProductsAdd?.map((item) => {
+          return { productId: item?.productId, collectionId: id };
+        })
+      );
+
+      const collectionProductsDelete = collectionProducts?.map((item) => {
+        if (item.flag === "delete") return item?.productId;
+      });
+      CollectionProduct.destroy({
+        where: {
+          productId: { [Op.in]: collectionProductsDelete },
+        },
+      });
+
       res.status(statusErrors.success).json({
         results: {
-          list: category,
+          list: collection,
         },
         success: true,
-        message: "Cập nhật chuyên mục thành công!",
+        message: "Cập nhật bộ danh sách thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         error: err.message,
-        message: "Xảy ra lỗi khi cập nhật chuyên mục!",
+        message: "Xảy ra lỗi khi cập nhật bộ danh sách!",
       });
     });
 };
@@ -261,7 +271,7 @@ const updateRecord = async (req, res) => {
 const updateStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
-  Category.update(
+  Collection.update(
     { status: status },
     {
       where: {
@@ -269,10 +279,10 @@ const updateStatus = async (req, res) => {
       },
     }
   )
-    .then((category) => {
+    .then((collection) => {
       res.status(statusErrors.success).json({
         results: {
-          list: category,
+          list: collection,
         },
         success: true,
         message: "Cập nhật trạng thái thành công!",
@@ -289,25 +299,30 @@ const updateStatus = async (req, res) => {
 
 const deleteRecord = async (req, res) => {
   const { id } = req.params;
-  Category.destroy({
+  Collection.destroy({
     where: {
       id: id,
     },
   })
-    .then((category) => {
+    .then((collection) => {
+      CollectionProduct.destroy({
+        where: {
+          collectionId: id,
+        },
+      });
       res.status(statusErrors.success).json({
         results: {
-          list: category,
+          list: collection,
         },
         success: true,
-        message: "Xóa chuyên mục thành công!",
+        message: "Xóa bộ danh sách thành công!",
       });
     })
     .catch((err) => {
       res.status(statusErrors.badRequest).json({
         success: false,
         error: err.message,
-        message: "Xảy ra lôi khi xóa chuyên mục!",
+        message: "Xảy ra lôi khi xóa bộ danh sách!",
       });
     });
 };

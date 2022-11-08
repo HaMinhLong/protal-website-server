@@ -11,6 +11,7 @@ const Producer = db.producer;
 const ProductClass1 = db.productClass1;
 const ProductClass2 = db.productClass2;
 const ProductPrice = db.productPrice;
+const CollectionProduct = db.collectionProduct;
 const Supplier = db.supplier;
 const statusErrors = require("../errors/status-error");
 const { QueryTypes } = require("sequelize");
@@ -552,6 +553,11 @@ const deleteRecord = async (req, res) => {
   })
     .then((product) => {
       ProductClass1.destroy({
+        where: {
+          productId: id,
+        },
+      });
+      CollectionProduct.destroy({
         where: {
           productId: id,
         },

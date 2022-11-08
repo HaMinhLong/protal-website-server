@@ -73,6 +73,30 @@ db.productComment = require("./productComment.model")(sequelize, Sequelize);
 db.productClass1 = require("./productClass1.model")(sequelize, Sequelize);
 db.productClass2 = require("./productClass2.model")(sequelize, Sequelize);
 db.productPrice = require("./productPrice.model")(sequelize, Sequelize);
+db.collection = require("./collection.model")(sequelize, Sequelize);
+db.collectionProduct = require("./collectionProduct.model")(
+  sequelize,
+  Sequelize
+);
+
+//
+db.collection.belongsToMany(db.product, {
+  through: "collectionProducts",
+});
+db.product.belongsToMany(db.collection, {
+  through: "collectionProducts",
+});
+//
+
+//
+db.category.hasMany(db.collection);
+db.collection.belongsTo(db.category);
+//
+
+//
+db.website.hasMany(db.collection);
+db.collection.belongsTo(db.website);
+//
 
 //
 db.productClass1.belongsToMany(db.productClass2, {
@@ -82,9 +106,10 @@ db.productClass2.belongsToMany(db.productClass1, {
   through: "productPrices",
 });
 //
+
+//
 db.product.hasMany(db.productPrice);
 db.productPrice.belongsTo(db.product);
-//
 //
 
 //

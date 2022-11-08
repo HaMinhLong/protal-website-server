@@ -85,6 +85,7 @@ require("./app/routes/paymentMethod.routes")(app);
 require("./app/routes/order.routes")(app);
 require("./app/routes/productComment.routes")(app);
 require("./app/routes/location.routes")(app);
+require("./app/routes/collection.routes")(app);
 
 // WEBSITE
 require("./app/routes/website/article.routes")(app);
@@ -96,6 +97,7 @@ require("./app/routes/website/paymentMethod.routes")(app);
 require("./app/routes/website/productComment.routes")(app);
 require("./app/routes/website/location.routes")(app);
 require("./app/routes/website/message.routes")(app);
+require("./app/routes/website/collection.routes")(app);
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

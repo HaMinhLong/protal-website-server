@@ -125,7 +125,8 @@ const getOne = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const data = req.body;
+  const { username, fullName, email, mobile, userGroupId, status, password } =
+    req.body;
   const config = await Config.findAll({});
   const mailFrom =
     config && config[0] && config[0].email
@@ -137,7 +138,13 @@ const create = async (req, res) => {
       : "Naru+89-K-2";
 
   User.create({
-    password: bcrypt.hashSync(data.password, 8),
+    status: status,
+    username: username,
+    fullName: fullName,
+    email: email,
+    mobile: mobile,
+    userGroupId: userGroupId,
+    password: bcrypt.hashSync(password, 8),
   })
     .then((user) => {
       var transporter = nodemailer.createTransport(
