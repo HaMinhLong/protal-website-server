@@ -100,12 +100,27 @@ const getOne = async (req, res) => {
       {
         model: Category,
         required: true,
-        attributes: ["id", "text"],
+        attributes: ["id", "text", "url", "images", "description"],
       },
       {
         model: Product,
         required: true,
-        attributes: ["id", "name", "price", "negotiablePrice", "images"],
+        attributes: [
+          "id",
+          "name",
+          "price",
+          "isSale",
+          "negotiablePrice",
+          "images",
+          "url",
+        ],
+        include: [
+          {
+            model: Category,
+            required: true,
+            attributes: ["id", "text", "url"],
+          },
+        ],
       },
     ],
   })
@@ -133,7 +148,7 @@ const getOneByUrl = async (req, res) => {
       {
         model: Category,
         required: true,
-        attributes: ["id", "text", "url"],
+        attributes: ["id", "text", "url", "images", "description"],
         where: {
           url: `/${url}`,
         },
@@ -149,6 +164,13 @@ const getOneByUrl = async (req, res) => {
           "negotiablePrice",
           "images",
           "url",
+        ],
+        include: [
+          {
+            model: Category,
+            required: true,
+            attributes: ["id", "text", "url"],
+          },
         ],
       },
     ],

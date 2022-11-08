@@ -67,6 +67,7 @@ const getList = async (req, res) => {
         [Op.between]: [fromDate, toDate],
       },
     },
+
     order: [order],
     attributes: attributesQuery,
     offset: ranges[0],

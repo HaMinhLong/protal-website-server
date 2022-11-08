@@ -6,6 +6,7 @@ const db = require("../models");
 const Category = db.category;
 const Website = db.website;
 const CategoryGroup = db.categoryGroup;
+const Collection = db.collection;
 const Op = db.Sequelize.Op;
 const statusErrors = require("../errors/status-error");
 
@@ -132,6 +133,13 @@ const getOneByUrl = async (req, res) => {
     where: {
       url: `/${url}`,
     },
+    include: [
+      {
+        model: Collection,
+        required: false,
+        attributes: ["id", "name"],
+      },
+    ],
   })
     .then((category) => {
       if (findChild) {
