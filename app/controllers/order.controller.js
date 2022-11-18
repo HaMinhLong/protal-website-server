@@ -19,19 +19,19 @@ const getList = async (req, res) => {
   const attributesQuery = attributes
     ? attributes.split(",")
     : [
-        "id",
-        "name",
-        "phone",
-        "email",
-        "address",
-        "totalPrice",
-        "description",
-        "websiteId",
-        "paymentMethodId",
-        "status",
-        "createdAt",
-        "updatedAt",
-      ];
+      "id",
+      "name",
+      "phone",
+      "email",
+      "address",
+      "totalPrice",
+      "description",
+      "websiteId",
+      "paymentMethodId",
+      "status",
+      "createdAt",
+      "updatedAt",
+    ];
   const status = filters.status !== undefined ? filters?.status : "";
   const name = filters.name || "";
   const phone = filters.phone || "";
@@ -219,6 +219,7 @@ const updateRecord = async (req, res) => {
             price: element.price,
             negotiablePrice: element.negotiablePrice,
             totalPrice: element.totalPrice,
+            category: element.category,
           },
           {
             where: {
