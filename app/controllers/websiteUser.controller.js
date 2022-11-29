@@ -13,11 +13,14 @@ const getList = async(req, res) => {
     const id = filters.id || '';
 
     let options = {
-        [Op.and]: [id !== '' && { id: id }],
+        [Op.and]: [id !== '' && { id: id }, { status: 1 }],
         include: [{
             model: Website,
             required: true,
-            attributes: ['id', 'name']
+            attributes: ['id', 'name'],
+            where: {
+                status: 1
+            }
         }]
     };
 
@@ -40,15 +43,44 @@ const getList = async(req, res) => {
 };
 
 const grantPermission = async(req, res) => {
+    const { id } = req.params;
     const { websites } = req.body;
 
-    const productOrdersAdd = data.productOrders.filter((item) => item.flag === 'add');
-
-    res.status(statusErrors.badRequest).json({
-        success: false,
-        error: '',
-        message: 'Xảy ra lỗi khi lấy danh sách!'
+    const websiteUsersDelete = websites.map((item) => {
+        if (item.flag === 'delete') return item.value;
     });
+    WebsiteUser.destroy({
+        where: {
+            [Op.and]: [{
+                    websiteId: {
+                        [Op.in]: websiteUsersDelete
+                    }
+                },
+                {
+                    userId: id
+                }
+            ]
+        }
+    });
+
+    const websiteUsersAdd = websites.filter((item) => item.flag === 'add');
+    WebsiteUser.bulkCreate(websiteUsersAdd.map((item) => ({ userId: id, websiteId: item.value })))
+        .then((order) => {
+            res.status(statusErrors.success).json({
+                results: {
+                    list: order
+                },
+                success: true,
+                message: 'Cập nhật quyền thành công!'
+            });
+        })
+        .catch((err) => {
+            res.status(statusErrors.badRequest).json({
+                success: false,
+                error: err.message,
+                message: 'Xảy ra lỗi khi lấy thông tin đơn hàng!'
+            });
+        });
 };
 
 module.exports = {
