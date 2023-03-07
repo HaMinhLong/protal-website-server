@@ -1,18 +1,37 @@
 version: "3"
 
 services:
-  nginx:
+  node:
     restart: unless-stopped
-    container_name: nginx-cms
+    container_name: node
     build:
-      context: ./compose/docker/nginx
+      context: .
     ports:
-      - "3000:80"
+      - "8080:8080"
     volumes:
-      - ./build:/var/www:delegated
-      - ./compose/docker/nginx/conf:/etc/nginx/conf.d/
+      - ./:/var/www:delegated
+      - /var/www/node_modules
+    depends_on:
+      - postgres
     networks:
       - network-bridge
+
+
+  postgres:
+    restart: unless-stopped
+    container_name: postgres
+    build:
+      context: ./compose/docker/postgres
+    ports:
+      - "5432:5432"
+    env_file: ./compose/env/db.env
+    volumes:
+      - postgresqldata:/var/lib/postgresql
+    networks:
+      - network-bridge
+
+volumes:
+  postgresqldata:
 
 networks:
   network-bridge:
