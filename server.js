@@ -10,25 +10,25 @@ app.use(express.json());
 app.use(cors());
 
 app.use((req, res, next) => {
-    const allowedOrigins = ['http://localhost:3000', 'https://protal-website.herokuapp.com'];
-    const origin = req.headers.origin;
+  const allowedOrigins = ['http://localhost:3000', 'https://protal-website.herokuapp.com'];
+  const origin = req.headers.origin;
 
-    if (allowedOrigins.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-    }
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
 
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'access-token, Origin, Content-Type, Accept');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'access-token, Origin, Content-Type, Accept');
 
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
 
-    // Pass to next layer of middleware
-    next();
+  // Pass to next layer of middleware
+  next();
 });
 
 // parse requests of content-type - application/json
@@ -51,7 +51,11 @@ db.sequelize.sync();
 
 // simple route
 app.get('/', (req, res) => {
-    res.json({ message: 'Welcome to halong application.' });
+  res.json({ message: 'Welcome to protal website server application.' });
+});
+
+app.get('/hello', (req, res) => {
+  res.json({ message: 'Hello World' });
 });
 
 // routes
@@ -95,5 +99,5 @@ require('./app/routes/website/collection.routes')(app);
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
+  console.log(`Server is running on port ${PORT}.`);
 });
