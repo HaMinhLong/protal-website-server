@@ -1,0 +1,28 @@
+node ('videoroof') {
+    currentBuild.result = 'SUCCESS'
+
+    try {
+        switch (env.BRANCH_NAME) {
+            case "develop":
+                stage('Checkout'){
+                    checkout scm
+                }
+
+                stage('Install dependencies') {
+                    sh 'npm install --force'
+                }
+
+                stage('Build artifacts') {
+                    sh 'npm run build'
+                }
+            break
+
+            default:
+            break
+        }
+    } catch (err) {
+        currentBuild.result = 'FAILURE'
+
+        throw err
+    }
+}

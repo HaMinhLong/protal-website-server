@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  nginx:
+    restart: unless-stopped
+    container_name: nginx-cms
+    build:
+      context: ./compose/docker/nginx
+    ports:
+      - "3000:80"
+    volumes:
+      - ./build:/var/www:delegated
+      - ./compose/docker/nginx/conf:/etc/nginx/conf.d/
+    networks:
+      - network-bridge
+
+networks:
+  network-bridge:
+    driver: bridge
