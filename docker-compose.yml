@@ -36,3 +36,5 @@ volumes:
 networks:
   network-bridge:
     driver: bridge
+
+# docker-compose up -d
