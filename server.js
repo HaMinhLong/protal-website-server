@@ -54,10 +54,6 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to protal website server application.' });
 });
 
-app.get('/hello', (req, res) => {
-  res.json({ message: 'Hello World!' });
-});
-
 // routes
 require('./app/routes/auth.routes')(app);
 require('./app/routes/config.routes')(app);
