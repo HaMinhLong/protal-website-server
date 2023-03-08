@@ -55,7 +55,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/hello', (req, res) => {
-  res.json({ message: 'Hello World' });
+  res.json({ message: 'Hello World!' });
 });
 
 // routes
@@ -99,9 +99,5 @@ require('./app/routes/website/collection.routes')(app);
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
-<<<<<<< HEAD
     console.log(`Server is running on port ${PORT}.`);
-=======
-  console.log(`Server is running on port ${PORT}.`);
->>>>>>> 4a78d0bde1ba2f244782b785bf03717ea2c9d8b2
 });
