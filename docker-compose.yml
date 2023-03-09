@@ -27,13 +27,13 @@ services:
       - "5432:5432"
     env_file: ./compose/env/db.env
     volumes:
-      - ./db-data/:/var/lib/postgresql/data/
-      # - postgresqldata:/var/lib/postgresql
+      # - ./db-data/:/var/lib/postgresql/data/
+      - postgresqldata:/var/lib/postgresql
     networks:
       - network-bridge
 
-# volumes:
-#   postgresqldata:
+volumes:
+  postgresqldata:
 
 networks:
   network-bridge:
