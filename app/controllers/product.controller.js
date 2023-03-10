@@ -44,7 +44,7 @@ const getList = async (req, res) => {
       ];
   const status = filters.status !== undefined ? filters.status : '';
   const name = filters.name || '';
-  const negotiablePrice = filters.negotiablePrice.split(',') || '';
+  const negotiablePrice = filters.negotiablePrice ? filters.negotiablePrice.split(',') : '';
   const url = filters.url || '';
   const websiteId = filters.websiteId || '';
   const categoryId = filters.categoryId || '';
