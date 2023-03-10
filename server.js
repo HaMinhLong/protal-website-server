@@ -10,7 +10,12 @@ app.use(express.json());
 app.use(cors());
 
 app.use((req, res, next) => {
-  const allowedOrigins = ['http://localhost:3000', 'https://protal-website.herokuapp.com', 'https://cms.naru.software'];
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://protal-website.herokuapp.com',
+    'https://cms.naru.software',
+    'https://tunganh.naru.software'
+  ];
   const origin = req.headers.origin;
 
   if (allowedOrigins.includes(origin)) {
