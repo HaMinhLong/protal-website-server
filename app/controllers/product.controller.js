@@ -44,7 +44,7 @@ const getList = async (req, res) => {
       ];
   const status = filters.status !== undefined ? filters.status : '';
   const name = filters.name || '';
-  const price = filters.price.split(',') || '';
+  const negotiablePrice = filters.negotiablePrice.split(',') || '';
   const url = filters.url || '';
   const websiteId = filters.websiteId || '';
   const categoryId = filters.categoryId || '';
@@ -64,9 +64,9 @@ const getList = async (req, res) => {
             [Op.like]: '%' + name + '%'
           }
         },
-        price !== '' && {
-          price: {
-            [Op.between]: [Number(price[0]), Number(price[1])]
+        {
+          negotiablePrice: {
+            [Op.between]: [Number(negotiablePrice[0] || 0), Number(negotiablePrice[1] || 90000000000)]
           }
         },
         websiteId !== '' && { websiteId: websiteId },
