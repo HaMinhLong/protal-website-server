@@ -1,7 +1,8 @@
 // PROJECT IMPORT
-const { authJwt, uploadImage } = require("../middleware");
-const controller = require("../controllers/uploadImage.controller");
+const { authJwt, uploadImage } = require('../middleware');
+const controller = require('../controllers/uploadImage.controller');
 
 module.exports = function (app) {
-  app.post("/upload", uploadImage.single("image"), controller.create);
+  app.post('/upload', uploadImage.single('image'), controller.create);
+  app.delete('/image', controller.destroy);
 };
